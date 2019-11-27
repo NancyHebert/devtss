@@ -1,0 +1,44 @@
+[
+{
+    "external_students_count": 7,
+    "internal_students_count": 5,
+    "level": [
+        {
+            "count": 4,
+            "level_of_instruction": "msc"
+        },
+        {
+            "count": 8,
+            "level_of_instruction": "phd"
+        }
+    ],
+    "mean_messages_sent": 7.5,
+    "mean_researchers_contacted": 3.0,
+    "median_messages_sent": 7.5,
+    "median_researchers_contacted": 3,
+    "student": [
+        {
+            "email": "e@mail.ca",
+            "level_of_instruction": "msc",
+            "messages_sent": 4,
+            "name": "student name",
+            "profile_creation": "2017-02-16T17:59:38.498864",
+            "researcher_names": [
+                "Dr. One",
+                "Dr. Two",
+                "Dr. Three"
+            ],
+            "username": "e@mail.ca"
+        },
+        {
+            "email": "f@mail.ca",
+            "level_of_instruction": "phd",
+            "messages_sent": 11,
+            "name": "student name 2",
+            "profile_creation": "2017-02-16T17:59:38.498926",
+            "researcher_names": [],
+            "username": "f@mail.ca"
+        }
+    ]
+}
+]

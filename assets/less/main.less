@@ -1,0 +1,886 @@
+@import 'base.less';
+
+*, html, body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  	.sourceSansPro;
+  	font-size: @facultyBaseFontSize;
+  	.bolded;
+  	color: @faculty-ternary;
+  	.removeBoxShadow;
+}
+
+.container-fluid >.row {
+    margin-left: -15px;
+    margin-right: -10px;
+}
+
+/* vue.js */
+#loading-message {
+	z-index: 1;
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(255,255,255,0.5);
+	padding-left: 40%;
+	padding-top: 2em;
+	font-size: 3em;
+}
+
+[v-cloak] {
+	display: none;
+}
+
+/* Fonts */
+
+h1 {color: @faculty-primary;} /*Garnet*/
+h2 {color: @faculty-secondary;} /*Purple*/
+h3 {color: @faculty-ternary;} /*Grey*/
+h4 {color: @faculty-ternary-darker;} /*UO Grey*/
+h5 {color: @faculty-UO-grey-darker} /*Ligther Grey*/
+
+address, article, aside, canvas, details, figcaption, figure, footer, header, group, menu, nav, section, summary, .wrapper, .headerWrapper, main {
+	margin:0;
+	.removeBoxShadow;
+}
+
+p { word-wrap: break-word; }
+
+/* mainHeader Styles */
+
+#mainHeader {
+	background: @faculty-ternary url('../../assets/images/noise_texture.png') top left repeat;
+	color: @faculty-white;
+	padding: 0!important;
+	display: block;
+	border-top: 1rem solid @faculty-primary;
+  
+	nav { background:@faculty-primary!important; }
+
+	#topNav {
+
+		#uoBrand {
+			padding-left: 0;
+			padding-right:1rem;
+		}
+
+		.navbar-collapse {
+			.container {
+				margin-top: 0!important;
+			}
+
+			.nav {
+				padding: 1rem 0 1rem 0;
+				color: @faculty-white;
+			}
+
+			.navbar-right {
+				padding: 1rem;
+				.roundedCorners;
+				background: lighten(@faculty-ternary, 30%);
+				.insetShadow;
+
+				label {	
+					color: @faculty-white;
+					padding: 1rem;
+				}
+
+				.btn {
+					.loginBtn;
+
+					&:hover {
+						.loginBtnHover;
+					}
+				}
+			}
+
+			.ng-scope {
+
+				.nav {
+					margin-right: 1rem;
+
+					li {
+						.btn {
+							margin-bottom: 0px;
+							.bolded;
+							color: @faculty-white;
+							text-align: center;
+							vertical-align: middle;
+							cursor: pointer;
+							background-image: none;
+							border: 0.1rem solid transparent;
+							white-space: nowrap;
+							line-height: inherit;
+							.roundedCorners;
+							-moz-user-select: none;
+
+							&:active, &:focus, &:visited {
+								background: lighten(@faculty-ternary-darker, 20%);
+
+							}
+
+
+
+							&:hover {
+								background: @faculty-ternary-darker;
+
+							}
+
+
+						}
+
+						.all {
+
+							.helpBtn;
+
+							&:hover {
+								.helpBtnHover;
+
+							}
+
+						}
+
+					}
+				}
+			}
+
+		}
+	}
+
+	#siteId {
+
+	   	padding: 0 1rem 1rem 1rem;
+	   	margin-left: 0.6rem;
+	   	margin-right: 1rem;
+
+	    a {
+	    	color: @faculty-white;
+	    	text-decoration: underline;
+	    	.bolded;
+	    	font-size: 1rem;
+	    }
+
+	    span.siteId-text  {
+
+	    	color: @faculty-ternary-extra-light;
+	    	line-height: 1.5rem;
+	    	margin-top: 0;
+			margin-bottom: 0;
+			font-size: 1.5rem;
+	    }
+	}
+
+
+	.navbar-toggler {
+		margin: 0.6rem 0 0.6rem 0;
+	    border: 0.1rem solid @faculty-white;
+	    background: @faculty-ternary;
+
+	    &:hover {
+	    	background: @faculty-ternary-light;
+	    	color: @faculty-black;
+	    }
+	}
+
+	#navToggle {
+		background: @faculty-primary;
+		display:block;
+	}
+
+	nav {
+
+		background: @faculty-ternary;
+		padding-top: 0;
+		padding-bottom:0;
+		margin: 0;
+
+		.navbar-brand {
+			background: @faculty-primary;
+			color: @faculty-white;
+			padding: 0.5rem!important;
+			margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 1rem;
+			height: auto;
+			.bottomSideRoundedCorners;
+
+			.fa {
+				margin-right: 1rem;
+				font-size: 1rem;
+			}
+
+			img {
+				// margin: 0.2rem;
+				display: block;
+				width: auto;
+				height: 50px;
+			}
+
+		}
+
+		.nav {
+
+			padding: 1rem 0 1rem 0;
+			font-size: 1rem;
+
+			.nav-item {
+				display: inline-block;
+
+				.nav-link {
+					color: @faculty-white;
+					padding: 0.6rem;
+				}
+
+			}
+
+
+
+			.logout {
+
+				background: @faculty-primary;
+				.roundedCorners;
+				border:0.1rem solid @faculty-primary-light;
+				transition: all 0.3s ease 0s!important;
+				text-align: center;
+
+				a {
+					color: @faculty-white!important;
+				}
+
+				&:active { background: lighten(@faculty-primary-darker, 10%)!important; }
+				&:visited { background: lighten(@faculty-primary-darker, 10%)!important; }
+				&:hover {
+					background: lighten(@faculty-primary-darker, 20%)!important;
+					border: 0.1rem solid @faculty-primary;
+				}
+				&:focus { background: lighten(@faculty-primary-darker, 20%)!important; }
+			}
+
+			.lang-switch {
+				background: @faculty-ternary;
+				.roundedCorners;
+				border:0.1rem solid @faculty-ternary-light;
+				transition: all 0.3s ease 0s!important;
+				text-align: center;
+
+
+
+				a {
+					color: @faculty-white!important;
+				}
+
+				&:active { background: lighten(@faculty-ternary-light, 20%)!important; }
+				&:visited { background: lighten(@faculty-ternary-light, 50%)!important; }
+				&:hover {
+					background: @faculty-ternary-light;
+					border: 0.1rem solid @faculty-ternary;
+					color: @faculty-white!important;
+				}
+				&:focus { background: lighten(@faculty-ternary-light, 80%)!important; }
+			}
+
+			.dropdown-menu-right {
+			    right: 0;
+			    left: auto;
+			}
+
+			.dropdown {
+
+				background:lighten(@faculty-ternary, 10%);
+				.roundedCorners;
+				border: 0.1rem solid @faculty-ternary-light;
+				transition: all 0.3s ease 0s;
+				text-decoration: none;
+				text-align: center;
+				font-size: 0.9rem;
+
+				&:active { background: lighten(@faculty-ternary, 20%); }
+				&:visited { background: lighten(@faculty-ternary, 50%); }
+				&:hover {
+					background: @faculty-ternary;
+					border: 0.1rem solid @faculty-ternary-light;
+
+				}
+				&:focus { background: lighten(@faculty-ternary, 80%); }
+
+			}
+
+		}
+
+
+
+		.notifications {
+
+			padding: 0.5rem!important;
+			background: @transparent!important;
+			text-decoration: none!important;
+			color: @faculty-white!important;
+
+			&:active { background: lighten(@faculty-green, 20%)!important; }
+			&:visited { background: lighten(@faculty-green, 50%)!important; }
+			&:hover { background: lighten(@faculty-green, 10%)!important; }
+			&:focus { background: lighten(@faculty-green, 80%)!important; }
+
+		}
+
+		.language {
+			padding: 0!important;
+			margin: 0.9rem 0.5rem 0.9rem 0.5rem!important;
+			background: @faculty-ternary!important;
+			.roundedCorners;
+			border: 0.1rem solid @faculty-ternary-lighter!important;
+			text-decoration: none!important;
+			transition: all 0.3s ease 0s!important;
+
+			a {
+				padding: 0.3rem!important;
+				text-decoration: none;
+			}
+
+			&:active { background: @faculty-ternary-lighter; }
+			&:visited { background: @faculty-ternary-lighter; }
+			&:hover {
+				background: @faculty-ternary-lighter!important;
+				border: 0.1rem solid @faculty-UO-grey-darker!important;
+			}
+			&:focus { background: @faculty-ternary-lighter; }
+
+			.text {
+				padding-right: 0.3rem!important;
+				padding-left: 0.3rem!important;
+			}
+		}
+
+	}
+
+}/*mainHeader*/
+
+
+.headerWrapper.container-fluid {
+	padding-right: 0;
+}
+
+.headerWrapper {
+	display: block!important;
+	top: 0!important;
+	position: relative;
+	padding-left: 0!important;
+	padding-right: 0!important;
+	background: @faculty-ternary;
+
+	#uoBrandWrapper {
+		.navbar-brand {
+			position:absolute;
+			top: 0;
+			z-index: 50;
+			@media(min-width:768px) {
+				background: @faculty-primary;
+			}
+
+			color: @faculty-white;
+			padding: 0.5rem 0 0.5rem 0;
+			// padding: 0.5rem;
+			margin-top: 0;
+			margin-bottom: 0;
+			margin-left: 1rem;
+			.bottomSideRoundedCorners;
+			height: auto;
+
+			img {
+				// margin: 0.2rem;
+				display: block;
+				//width: 148px;
+				height: 50px;
+			}
+
+		}
+	}
+
+	#topBar {
+		background: @faculty-primary!important;
+		display: block;
+		height: 0;
+
+		.navbar-toggler {
+			margin: 0.7rem 1rem 0.6rem 1rem!important;
+			border: 0.1rem solid @faculty-ternary;
+			background: @faculty-ternary-lighter;
+			color: @faculty-black;
+
+			&:hover {
+				background: @faculty-ternary-lighter;
+				color: @faculty-black;
+			}
+		}
+	}
+}
+
+
+.wrapper {
+	background: @faculty-UO-grey;
+
+	.box {
+	  	bottom: 0;  /*increase for footer use */
+	    left: 0;
+	    position: absolute;
+	    right: 0;
+	    top: 12rem;
+	    display: flex!important;
+	}
+
+}
+
+.wrapper, .row {
+   margin-left: 0;
+   margin-right: 0;
+}
+
+.wrapper:before, .wrapper:after,
+.column:before, .column:after {
+	content: "";
+    display: table;
+}
+
+.wrapper:after, .column:after { clear: both; }
+
+main {
+
+	padding: 1rem 0 1.5rem 0!important;
+	overflow: auto!important;
+	display:block;
+
+	#mainWrapper {
+
+		background:@transparent!important;
+		/*margin-top: 10rem!important;*/
+
+		#breadcrumbsContent {
+
+			padding: 0 2rem 0 2rem!important;
+			margin: 0 auto!important;
+			display: block!important;
+			width: 98%!important;
+			/*background:@faculty-ternary-light!important;*/
+			.secondGreyGradient!important;
+			.topSideRoundedCorners!important;
+			.boxShadow!important;
+
+
+			p.breadcrumb {
+				color: @faculty-white!important;
+				background:@transparent!important;
+				padding:1rem 0rem 1rem 0!important;
+				margin-bottom: 0!important;
+				font-size: 1.2rem!important;
+			}
+
+			.breadcrumb {
+
+				background:@transparent!important;
+				padding:0.5rem 0.5rem 0.5rem 0!important;
+				margin-bottom: 0!important;
+
+				a {
+					color: @faculty-white!important;
+					padding: 0.5rem!important;
+					text-decoration: none!important;
+					border-bottom: 0.1rem dashed @faculty-primary!important;
+
+					&:visited {
+						background: @faculty-secondary!important;
+						.roundedCorners!important;
+						border-bottom: none!important;
+					}
+
+					&:hover {
+						border-bottom: 0.1rem solid @faculty-primary!important;
+					}
+
+					&:active {
+						background: @faculty-ternary!important;
+						.roundedCorners!important;
+						border-bottom: none!important;
+					}
+
+					&:focus {
+						background: @faculty-ternary!important;
+						.roundedCorners!important;
+						border-bottom: none!important;
+					}
+				}
+			}
+		}
+
+
+		#mainContent {
+			background:@faculty-UO-grey-lighter!important;
+			padding: 0.4rem 0 0.4rem 0!important;
+			.roundedCorners;
+			.boxShadow;
+
+			margin-top: 0!important;
+			/*.gradient-pattern!important;*/
+
+			.enjoyCss {
+				.speechBubble!important;
+			}
+
+			.inline-link-1!important;
+
+			.container-fluid {
+				padding-right: 0.4rem;
+    			padding-left: 0.4rem;
+			}
+
+			.card {
+				.roundedCorners;
+			}
+
+
+		}
+	}
+}
+
+footer {
+	background: @faculty-ternary url('../../assets/images/noise_texture.png') top left repeat;
+	color: @faculty-white!important;
+	padding: 1rem!important;
+
+	a {
+		color: @faculty-ternary-extra-light;
+		text-decoration: underline;
+
+		&:hover {
+			color: @faculty-ternary-lighter;
+		}
+	}
+
+	#help {
+		p { font-size: 0.8rem; }
+
+		hr {
+			border: 0; 
+			height: 1px; 
+			background-image: linear-gradient(to right, rgba(169,169,169, 0), rgba(169,169,169, 0.75), rgba(169,169,169, 0));
+		}
+	}
+
+
+	.footerInfo {
+
+		background: @faculty-black;
+		.roundedCorners;
+		padding: 1rem;
+
+		h5 { color: @faculty-white; }
+		p { font-size: 0.8rem; }
+
+		.column {
+
+			padding: 0;
+
+			address {
+
+				a {
+					color: ligten(@faculty-blue-light, 50%)!important;
+					text-decoration: underline;
+					&:hover { color: @faculty-ternary-extra-light!important; }
+					&:visited { color: ligten(@faculty-blue-lighter, 50%)!important; }
+					&:active { color: ligten(@faculty-blue-light, 50%)!important; }
+					&:focus { color: ligten(@faculty-blue-light, 50%)!important; }
+				}
+
+			}
+
+			.btn-default {
+				background: @faculty-ternary-extra-light;
+				color: @faculty-black;
+
+				&:hover {
+					background: @faculty-ternary-lighter;
+					color: @faculty-white;
+				}
+			}
+		}
+	}
+}
+
+
+
+
+
+
+/*styles for the collapsible navbar*/
+nav.navbar .navbar-toggler {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: inherit;
+    width: 70px;
+ }
+
+ .navbar-toggler {
+    padding: .5rem .75rem;
+    font-size: 1.25rem;
+    line-height: 1;
+    background: 0 0;
+    border: 1px solid transparent;
+
+}
+
+nav.navbar.navbar-light button.navbar-toggler.layout-toggler {
+    background: #f8f9fa;
+    border-bottom: 1px solid #d1d4d7;
+    border-right: 1px solid #d1d4d7;
+}
+
+nav.navbar button.navbar-toggler.layout-toggler {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 200px;
+    padding: 0 1rem;
+    height: 55px;
+    line-height: 55px;
+    border: 0;
+}
+
+
+
+/* uottawa Styles for the faculty of medicine swoosh */
+#uottawa-global-footer-swoosh {
+	/*position: absolute;*/
+	/*bottom: 0;*/
+	width: 100%;
+	height: 15px;
+}
+
+/* uOttawa Swoosh Footer Bar */
+#uottawa-global-footer-swoosh-left-bg {
+	/*height: 15px;*/
+	width: 50%;
+	/*position: absolute;*/
+	background: @faculty-UO-grey;
+	/*left: 0;*/
+}
+
+#uottawa-global-footer-swoosh-left {
+	width: 75%;
+	height: 15px;
+	float: left;
+	background: @faculty-UO-grey;
+	/*position: relative;*/
+	z-index: 5;
+}
+
+#uottawa-global-footer-swoosh-right {
+	width: 25%;
+	height: 15px;
+	background: @faculty-secondary url(../images/swoosh.png) no-repeat left top;
+	float: left;
+	/*position: relative;*/
+	z-index: 5;
+}
+
+
+
+/* MEDIA Queries */
+
+@media (max-width: 61.9em) {
+
+	/*Off Canvas*/
+	.row-offcanvas {
+	position: relative;
+	-webkit-transition: all 0.25s ease-out;
+	-moz-transition: all 0.25s ease-out;
+	transition: all 0.25s ease-out;
+	}
+
+	.row-offcanvas-left.active {
+	left: 45%;
+	}
+
+	.row-offcanvas-left.active .sidebar-offcanvas {
+	left: -45%;
+	position: absolute;
+	top: 0;
+	width: 45%;
+	margin-left: 5px;
+	}
+
+	#sidebarNavigationLg, #sidebarNavigationLg a {
+	padding-left:3px;
+	}
+
+	.sidebar-offcanvas { position: absolute; top: 0; width: auto; /* 6 columns */ }
+
+}
+
+@media (min-width: 62em) {
+
+	/* Off Canvas */
+	.row-offcanvas {
+		position: relative;
+		-webkit-transition: all 0.25s ease-out;
+		-moz-transition: all 0.25s ease-out;
+		transition: all 0.25s ease-out;
+	}
+
+	.row-offcanvas-left.active {
+		left: 25%;
+	}
+
+	.row-offcanvas-left.active .sidebar-offcanvas {
+		left: -25%;
+		position: absolute;
+		top: 0;
+		width: 25%;
+		margin-left: 5px;
+	}
+
+	#sidebarNavigationLg, #sidebarNavigationLg a { padding-left:3px; }
+	.sidebar-offcanvas { position: absolute; top: 0; width: auto; /* 6 columns */ }
+}
+
+
+/* Large devices (desktops, less than 75em)*/
+@media (max-width: 74.9em) {
+	.static-splash-cell {
+    	vertical-align: inherit;
+    }
+}
+
+
+/* Medium devices (tablets, less than 71em)*/
+@media (max-width: 71em) {
+
+ 	aside {
+ 		margin-top: 4.5rem!important;
+ 	}
+
+	#tabContainer  {
+		padding: 0 1rem 0 0!important;
+	}
+
+	#tabContainer .nav .nav-link {
+	    font-size: 1.1rem!important;
+	}
+}
+
+
+// Medium devices (tablets, less than 62em)
+@media (max-width: 61em) {
+	.wrapper {
+		padding-right: 0;
+		padding-left: 0;
+	}
+
+	main {
+		padding: 0 0 0 0!important;
+	}
+
+	#researchersListContainer { 
+		margin-top: 0.9rem;
+		// .removeRoundedCorners; 
+	}
+
+	.navbar-collapse .ng-scope .nav {
+    	margin-right: 0!important;
+    }
+
+	#tabContainer  {
+		padding: 0 0 0 0!important;
+	}
+
+	#mainHeader {
+    	border-top: none!important;
+		#siteId {
+			padding: 0.3rem 0.3rem 0.5rem 0.3rem!important;
+		}
+    	.navbar-brand {
+    		margin-top: -3rem!important;
+    	}
+    }
+
+    .headerWrapper {
+		#topBar {
+			background: @faculty-primary!important;
+			display: block!important;
+			height: 4rem!important;
+		}
+	}
+
+	#topNav {
+		#uoBrand {
+			margin-top: 2rem;
+			@media(max-width:768px){
+				margin-top: 0;
+				clear:both;
+      		}
+		}
+	}
+}
+
+
+// Small devices (landscape phones, less than 48em)
+@media (max-width: 47.9em) {
+
+	#researchersListContainer {
+		.pull-right {
+			float: none;
+		}
+	}
+
+    .headerWrapper {
+		#topBar {
+			background: @faculty-primary!important;
+			display: block!important;
+			height: 4rem!important;
+
+			#topNav {
+				#uoBrand {
+					padding-left: 0!important;
+					padding-right: 0!important;
+					margin-top: 0!important;
+				}
+			}		
+		}
+
+		#mainHeader {
+    		border-top: none!important;
+		
+			.navbar-brand {
+				margin-top: -3rem!important;
+			}
+    	}
+	}
+
+	.nav-item {
+		float: none!important;
+		clear: both!important;
+		display: list-item!important;
+		// background: transparent!important;
+		// border: none!important;
+	}
+
+	ul.pull-right {
+	  	clear: both!important;
+	  	float: none!important;
+	  	text-align: right;
+      li {
+        clear: both!important;
+        float: none!important;
+      }
+	}
+
+}
+
+
+// Extra small devices (portrait phones, less than 34em)
+@media (max-width: 33.9em) { }
+
+// larger device min-width
+@media (min-width: 71.1em) { }

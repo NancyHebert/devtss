@@ -1,0 +1,3419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="/">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>uOttawa Faculty of Medicine Thesis Supervisor Search</title>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css"
+    integrity="sha384-AysaV+vQoT3kOAXZkl02PThvDr8HYKPZhNT5h/CXfBThSRXQ6jW5DO2ekP5ViFdi"
+    crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker3.standalone.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+  <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Source+Sans+Pro'>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.2/css/jquery.dataTables.min.css">
+  <link rel="stylesheet" href="assets/css/main.min.css">
+  <link rel="shortcut icon" href="https://med.uottawa.ca/sites/all/themes/custom/uottawa_zen_assets/favicon.ico" type="image/vnd.microsoft.icon">
+</head>
+
+<body>
+  <div id="loading-message">
+    <span class="fa fa-spinner fa-spin"></span>&nbsp;Charge&shy;ment&hellip;<br>
+    <span class="fa fa-spinner fa-spin"></span>&nbsp;Loading&hellip;
+  </div>
+
+    <div id="app" v-cloak>
+      <!--[if lt IE 10]>
+        <div class="alert alert-warning browserHappy">
+          {{ $t("message.OUTDATED-BROWSER-MESSAGE-PARTI") }}
+          <a href="mailto:grad.med@uottawa.ca">grad.med@uottawa.ca</a>
+          {{ $t("message.OUTDATED-BROWSER-MESSAGE-PARTII") }}
+        </div>
+      <![endif]-->
+
+      <a href="#mainContent" class="sr-only sr-only-focusable">{{ $t("message.SKIP") }}</a>
+
+      <!-- start modalViewStudentProfile -->
+      <div
+        v-if="role === 'researcher' || role === 'admin'"
+        id="modalViewStudentProfile"
+        class="modal fade"
+        tabindex="-1"
+        role="dialog"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+
+            <!-- start modal-header -->
+            <div class="modal-header">
+              <button
+                type="button"
+                class="close"
+                data-dismiss="modal"
+                aria-label="Close"
+                ga-on="click"
+                ga-event-category="Close link for viewStudentProfile (researcher view)"
+                ga-event-action="Researcher closed the student profile dialog window"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+              <h4 class="modal-title">{{ $t("message.STUDENT-PROFILE") }}</h4>
+            </div>
+            <!-- end modal-header -->
+
+            <!-- start modal-body -->
+            <div class="modal-body">
+              <article id="viewStudentProfile">
+                <div v-for="student_profile in student_profile_array">
+
+                  <!-- start section student profile -->
+                  <section class="card card-block">
+                    <p><strong>{{ $t("message.NAME") }}</strong>{{ $t("message.COLON") }} {{ student_profile.name }}</p>
+                    <p><strong>{{ $t("message.LEVEL") }}</strong>
+                      <span v-if="student_profile.level_of_instruction === 'msc'">{{ $t("message.MSC") }}</span>
+                      <span v-if="student_profile.level_of_instruction ==='phd'">{{ $t("message.PHD") }}</span>
+                    </p>
+
+                    <div
+                      v-for="program in programs"
+                      v-if="program.code === student_profile.program_code"
+                    >
+                      <p v-if="program.lang===theSelectedLanguage">
+                        <strong>{{ $t("message.PROGRAM") }}</strong>
+                        {{ program.name }}
+                      </p>
+                    </div>
+
+                    <div
+                      v-for="admittedItem in isAdmitted"
+                      v-if="admittedItem.code == student_profile.admitted"
+                    >
+                      <p v-if="admittedItem.lang===theSelectedLanguage">
+                        <strong>{{ $t("message.ADMITTED-STATUS") }}</strong>
+                        {{ admittedItem.name }}
+                      </p>
+                    </div>
+
+                    <p v-for="cv in cvStudent">
+                      <strong>{{ $t("message.CV") }}</strong>
+                      <a
+                        v-bind:href="be_url+'/students/'+encodeURIComponent(student_profile.username)+'/cvs/'+cv"
+                        target="_blank"
+                        class="label label-pill label-primary"
+                        ga-on="click"
+                        ga-event-category="Student cv link (researcher view)"
+                        ga-event-action="Researcher downloaded the student cv"
+                      >
+                        {{ cv }}
+                        <span class="fa fa-download" aria-hidden="true"></span>
+                      </a>
+                    </p>
+
+                    <div v-for="transcripts in transcriptsStudent">
+                      <p v-for="transcript in transcripts">
+                        <strong>{{ $t("message.TRANSCRIPTS") }}</strong>
+                        <a
+                          v-bind:href="be_url+'/students/'+encodeURIComponent(student_profile.username)+'/transcripts/'+transcript"
+                          target="_blank"
+                          class="label label-pill label-primary"
+                          ga-on="click"
+                          ga-event-category="transcript link (researcher view)"
+                          ga-event-action="Researcher downloaded a student transcript"
+                        >
+                          {{ transcript }}
+                          <span class="fa fa-download" aria-hidden="true"></span>
+                        </a>
+                      </p>
+                    </div>
+                  </section>
+                  <!-- end section student profile -->
+
+                </div>
+              </article>
+            </div>
+            <!-- end modal-body -->
+
+            <!-- start modal-footer -->
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-ternary"
+                data-dismiss="modal"
+                ga-on="click"
+                ga-event-category="Close button for viewStudentProfile (researcher view)"
+                ga-event-action="Researcher closes the studentProfile dialog window"
+              >
+                {{ $t("message.CLOSE") }}
+              </button>
+            </div>
+            <!-- end modal-footer -->
+
+          </div>
+        </div>
+      </div>
+      <!-- end modalViewStudentProfile -->
+
+      <!-- start modalResearcherAvailability -->
+      <div
+        v-if="role === 'researcher'"
+        id="modalResearcherAvailability"
+        class="modal fade"
+        tabindex="-1"
+        role="dialog"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+
+            <!-- start modal-header -->
+            <div class="modal-header">
+              <button
+                type="button"
+                class="close"
+                data-dismiss="modal"
+                aria-label="Close"
+                ga-on="click"
+                ga-event-category="Close link (researcher view)"
+                ga-event-action="Researcher closed the researcher availability dialog window"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+              <h4 class="modal-title">{{ name }}</h4>
+            </div>
+            <!-- end modal-header -->
+
+            <!-- start modal-body -->
+            <div class="modal-body">
+              <article
+                v-if="role === 'researcher'"
+                class="card card-block"
+              >
+                <div
+                  v-if="dateInThePast"
+                  class="alertPastDate alert alert-danger alert-dismissible"
+                  role="alert"
+                >
+                  {{ $t("message.DATE-IN-PAST") }}
+                </div>
+
+                <form id="availability">
+                  <fieldset>
+                    <legend>{{ $t("message.EDIT-AVAILABILITY") }}</legend>
+                    <div class="form-check">
+                      <label class="form-date" for="availableDate">
+                        {{ $t("message.AVAILABLE-TO-SUPERVISE") }} {{ $t("message.STARTING-FROM") }}
+                      </label>
+                      <input
+                        id="availableDate"
+                        type="text"
+                        ga-on="click"
+                        ga-event-category="Input date field"
+                        ga-event-action="Researcher edited availability date"
+                      >
+                    </div>
+                  </fieldset>
+                </form>
+              </article>
+            </div>
+            <!-- end modal-body -->
+
+            <!-- start modal-footer -->
+            <div class="modal-footer">
+              <form>
+                <button
+                  type="button"
+                  class="btn btn-ternary"
+                  data-dismiss="modal"
+                  ga-on="click"
+                  ga-event-category="Close button (researcher view)"
+                  ga-event-action="Researcher closed the researcher availability dialog window"
+                >{{ $t("message.CLOSE") }}</button>
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  @click.prevent="saveAvailability(userId, $event)"
+                  data-dismiss="modal"
+                  ga-on="click"
+                  ga-event-category="Save button (researcher view)"
+                  ga-event-action="Researcher saved availability"
+                >{{ $t("message.SAVE") }}</button>
+              </form>
+            </div>
+            <!-- end modal-footer -->
+
+          </div>
+        </div>
+      </div>
+      <!-- end modalResearcherAvailability -->
+
+      <!-- start modalResearcherProfile -->
+      <!-- The v-if is to prevent Vue.js from choking on the attemps further down to access attributes of the clickedResearcher object -->
+      <!-- It removes the modal from the DOM until there's something to see -->
+      <div
+        v-if="clickedResearcher !== null"
+        id="modalResearcherProfile"
+        class="modal fade"
+        tabindex="-1"
+        role="dialog"
+      >
+        <div
+          v-bind:key="clickedResearcher.id"
+          class="modal-dialog"
+          role="document"
+        >
+          <!-- Use v-bind:key to force Vue to create a new modal object for each researcher -->
+          <div class="modal-content">
+
+            <!-- start modal-header -->
+            <div class="modal-header">
+              <button
+                type="button"
+                class="close"
+                data-dismiss="modal"
+                aria-label="Close"
+                aria-labelledby="Closes the researcher profile pop up."
+                ga-on="click"
+                ga-event-category="Close link"
+                ga-event-action="Closed the resesarcher profile dialog window"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+
+              <h4 class="modal-title">{{ $t("message.RESEARCHER-PROFILE") }}</h4>
+            </div>
+            <!-- end modal-header -->
+
+            <!-- start modal-body -->
+            <div class="modal-body">
+              <section id="basicResearcherInfo" class="row">
+                <div class="modalImgContainer row">
+                  <div class="imageContainer text-xs-center col col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <img
+                      class="img-rounded row"
+                      v-bind:src="'https://uniweb.uottawa.ca/picture.php?action=display&amp;contentType=members&amp;id='+clickedResearcher.id+'&amp;quality=large'"
+                      alt=""
+                    >
+                  </div>
+
+                  <p
+                    v-if="!clickedResearcher.available_date"
+                    v-bind:id="clickedResearcher.id"
+                    class="text-success small col col-lg-12 col-md-12 col-sm-12 col-xs-12"
+                  >
+                    <span class="fa fa-check" aria-hidden="true"></span>
+                    {{ $t("message.CURRENTLY-AVAILABLE") }}
+                  </p>
+
+                  <p
+                    v-if="clickedResearcher.available_date"
+                    v-bind:id="clickedResearcher.id"
+                    class="text-fail small col col-lg-12 col-md-12 col-sm-12 col-xs-12"
+                  >
+                    <span class="fa fa-check" aria-hidden="true"></span>
+                    {{ $t("message.AVAILABLE-TO-SUPERVISE") }}
+                    {{ $t("message.STARTING-FROM") }}
+                    {{ clickedResearcher.available_date }}
+                  </p>
+
+                  <div class="text-xs-center col col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <button
+                      v-if="role === 'unknown' || role===''"
+                      class="btn btn-primary row"
+                      @click.prevent="contactResearcher()"
+                      aria-label="Contact researcher button"
+                      v-bind:aria-describedby="'Open login screen to login and contact the researcher ' + clickedResearcher.membership_information.first_name + ' ' + clickedResearcher.membership_information.last_name"
+                      ga-on="click"
+                      ga-event-category="Contact researcher button"
+                      ga-event-action="Clicked to contact the researcher, open login dialog"
+                    >
+                      {{ $t("message.CONTACT") }}
+                    </button>
+                  </div>
+                </div>
+
+                <div class="col col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                  <span
+                    v-if="clickedResearcher.lastUpdateDate"
+                    class="badge badge-default"
+                  >
+                    {{ $t("message.LAST-UPDATED") }}
+                    {{ formatDate(clickedResearcher.lastUpdateDate) }}
+                  </span>
+                  <h5>
+                    {{ clickedResearcher.membership_information.first_name }}
+                    {{ clickedResearcher.membership_information.last_name }}
+                  </h5>
+                </div>
+
+                <div class="col col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                  <p>
+                    {{ clickedResearcher.membership_information.position_title[1] }}
+                    -
+                    {{ clickedResearcher.membership_information.academic_unit[1] }}
+                  </p>
+
+                  <a
+                    v-if="isValidURL(clickedResearcher.membership_information.homepage)"
+                    v-bind:href="clickedResearcher.membership_information.homepage"
+                    target="_blank"
+                  >
+                    {{ $t("message.VISIT-WEBSITE") }}
+                    <span class="fa fa-external-link" aria-hidden="true"></span>
+                  </a>
+                </div>
+              </section>
+
+              <div
+                v-if="role === 'student'"
+                class="row"
+              >
+                <!-- Begin form-group sendMessage-->
+                <section
+                  v-if="theResearcherTalkedToStudent == false"
+                  id="studentInitialMessage"
+                  class="card card-block"
+                >
+                <!--<section
+                  v-if="theResearcherTalkedToStudent == false || draft == true"
+                  id="studentInitialMessage"
+                  class="card card-block"
+                >-->
+
+                  <div
+                    v-if="messageSent"
+                    class=" alert3 alert alert-success alert-dismissible row"
+                    role="alert"
+                  >
+                    <button
+                      type="button"
+                      class="close"
+                      data-dismiss="alert"
+                      aria-label="Close"
+                      ga-on="click"
+                      ga-event-category="Close button"
+                      ga-event-action="Close alert message saved confirmation dialog window"
+                    >
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                    {{ $t("message.MESSAGE-SAVED") }}
+                  </div>
+                  <p>{{ $t("message.ENTER-MESSAGE") }}
+                    <a
+                      href="#collapseTips"
+                      data-toggle="collapse"
+                      aria-expanded="false"
+                      aria-controls="collapseTips"
+                      ga-on="click"
+                      ga-event-category="Click tips link"
+                      ga-event-action="Open collapsible area to view a list of tips"
+                    >
+                      {{ $t("message.TIPS") }} <span class="fa fa-chevron-down"></span>
+                    </a>
+                  </p>
+
+                  <div class="collapse" id="collapseTips">
+                    <div class="card card-block">
+                        <p> {{ $t("message.DONT-FORGET") }}</p>
+                        <ul>
+                          <li>{{ $t("message.INTRODUCE") }}</li>
+                          <li>{{ $t("message.STATE-INTERESTS") }}</li>
+                          <li>{{ $t("message.INCLUDE-INFO") }}</li>
+                          <li>{{ $t("message.PROOFREAD") }}</li>
+                        </ul>
+                      </div>
+                    </div>
+
+                    <div>
+                      <textarea class="form-control col-md-8" id="newmessage" rows="4"></textarea>
+                      <!--<p class="small">{{ $t("message.THIS-MESSAGE") }}</p>-->
+                    </div>
+
+                    <div>
+                      <button
+                        type="button"
+                        class="btn btn-primary"
+                        @click="sendInitialMessage(clickedResearcher.id, username, name, levelOfInstruction, admitted, programAdmitted)"
+                        ga-on="click"
+                        ga-event-category="Send button"
+                        ga-event-action="Send initial message to researcher"
+                      >
+                        {{ $t("message.SEND-MESSAGE") }}
+                      </button>
+
+                      <!--<button
+                        type="button"
+                        class="btn btn-secondary"
+                        @click="saveDraftMessage(clickedResearcher.id, username, name, levelOfInstruction, admitted, programAdmitted, $event)"
+                        ga-on="click"
+                        ga-event-category="Save draft button"
+                        ga-event-action="Save draft of initial message to researcher"
+                      >
+                        {{ $t("message.SAVE-DRAFT") }}
+                      </button>-->
+                    </div>
+                  </section>
+
+                  <section
+                    v-for="studentConversation in studentConversations"
+                    v-if="theResearcherTalkedToStudent === false"
+                    id="studentMessages"
+                    class="card card-block"
+                  >
+                  <!--<section
+                    v-for="studentConversation in studentConversations"
+                    v-if="theResearcherTalkedToStudent === false && studentConversation.is_draft != null"
+                    id="studentMessages"
+                    class="card card-block"
+                  >-->
+                    <div
+                      v-if="messageSent"
+                      class="alert2 alert alert-success alert-dismissible row"
+                      role="alert"
+                    >
+                      <button
+                        type="button"
+                        class="close"
+                        data-dismiss="alert"
+                        aria-label="Close"
+                        ga-on="click"
+                        ga-event-category="Close button"
+                        ga-event-action="Close alert message sent confirmation dialog window"
+                      >
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                      {{ $t("message.MESSAGE-SENT") }}
+                    </div>
+                    <section id="btnViewConversations" class="row">
+                      <button
+                        type="button"
+                        class="col-sm-12 btn btn-default btn-md btn-viewConversations"
+                        data-toggle="collapse"
+                        data-target="#theConversation"
+                        aria-expanded="false"
+                        aria-controls="#theConversation"
+                        ga-on="click"
+                        ga-event-category="View conversations button"
+                        ga-event-action="Click button to open panel to see the conversation messages."
+                      >
+                        {{ $t("message.VIEW-CONVERSATIONS") }}
+                        <span class="fa fa-chevron-circle-down"></span>
+                      </button>
+                    </section>
+
+                    <div id="theConversation" class="row collapse">
+                      <div
+                        v-for="conversation in studentConversation.conversations"
+                        v-if="conversation.talkedWith.researcherid==clickedResearcherId"
+                      >
+                        <p
+                          v-if="conversation.talkedWith.researcherHasReplied == false"
+                          class="alertInformation"
+                        >
+                          {{ $t("message.CANNOT-SEND-MESSAGE-UNTIL-RESEACHER-RESPOND") }}
+                        </p>
+
+                        <div
+                          v-for="message in conversation"
+                          class="row"
+                        >
+                          <div
+                            v-if="message.is_from_student === true"
+                            class="col-lg-12 col-md-12 col-sm-12 col-xs-12 card card-block messageContent studentmessage arrow_left"
+                          >
+                            <p>{{ $t("message.SENT-ON") }} {{ formatDate(message.sent_date) }}</p>
+                            <p v-if = "message.read_date != null">{{ $t("message.VIEWED-ON") }} {{ formatDate(message.read_date) }}</p>
+                            <p>{{ message.body }}</p>
+                          </div>
+
+                          <div
+                            v-if="message.is_from_student === false"
+                            class="col-lg-12 col-md-12 col-sm-12 col-xs-12 card card-block messageContent researchermessage arrow_right"
+                          >
+                            <p>{{ $t("message.SENT-ON") }} {{ formatDate(message.sent_date) }}</p>
+                            <p v-if = "message.read_date != null">{{ $t("message.VIEWED-ON") }} {{ formatDate(message.read_date) }}</p>
+                            <p>{{ message.body }}</p>
+                          </div>
+                        </div>
+
+                        <div
+                          v-if="conversation.talkedWith.researcherHasReplied"
+                          class="form-group row"
+                        >
+                          <div
+                            v-if="messageSent"
+                            class=" alert2 alert alert-success alert-dismissible"
+                            role="alert"
+                          >
+                            <button
+                              type="button"
+                              class="close"
+                              data-dismiss="alert"
+                              aria-label="Close"
+                              ga-on="click"
+                              ga-event-category="Close button"
+                              ga-event-action="Closed the researcher profile dialog window"
+                            >
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                            {{ $t("message.MESSAGE-SENT") }}
+                          </div>
+
+                          <div>
+                            <textarea class="form-control" id="newmessage-9999" rows="4"></textarea>
+                          </div>
+
+                          <div>
+                            <button
+                              ga-on="click"
+                              ga-event-category="Send button"
+                              ga-event-action="Send initial message to researcher"
+                              type="submit"
+                              @click="sendMessage(9999, conversation.talkedWith.researcherName, conversation.talkedWith.researcherid, username, name)"
+                              class="btn btn-primary"
+                            >
+                            <!-- the 9999 is a hack, sorry everyone -->
+                              {{ $t("message.SEND-MESSAGE") }}
+                            </button>
+                          </div>
+
+                        </div>
+                        <!-- End form-group sendMessage-->
+                      </div>
+                    </div>
+                  </section>
+                </div>
+
+              <section class="row" id="accordion" role="tablist" aria-multiselectable="true">
+
+                <div
+                  v-if="clickedResearcher.research_interests"
+                  id="profileResearchInterests"
+                  class="card"
+                >
+                  <div class="card-header" role="tab" id="headingResearchInterests">
+                    <h5 class="mb-0">
+                      <a
+                        href="#interestList"
+                        data-toggle="collapse"
+                        data-parent="#accordion"
+                        aria-controls="interestList"
+                        ga-on="click"
+                        ga-event-category="Research interests link"
+                        ga-event-action="Open panel to view the research interests"
+                      >
+                        {{ $t("message.RESEARCH-INTERESTS") }}
+                      </a>
+                    </h5>
+                  </div>
+
+                  <div
+                    id="interestList"
+                    class="collapse"
+                    role="tabpanel"
+                    aria-expanded="false"
+                    aria-labelledby="headingResearchInterests"
+                  >
+                    <div class="card-block">
+                      <ul>
+                        <li v-for="anInterest of clickedResearcher.research_interests">
+                          <span class="label label-pill label-default">{{ anInterest.interest[1] }}</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  v-if="clickedResearcher.biography"
+                  id="profileBiography"
+                  class="card"
+                >
+                  <div class="card-header" role="tab" id="headingOne">
+                    <h5 class="mb-0">
+                      <a
+                        href="#collapseOne"
+                        data-toggle="collapse"
+                        data-parent="#accordion"
+                        aria-controls="collapseOne"
+                        ga-on="click"
+                        ga-event-category="Biography link"
+                        ga-event-action="Open panel to view the researchers biography"
+                      >
+                        {{ $t("message.BIOGRAPHY") }}
+                      </a>
+                    </h5>
+                  </div>
+
+                  <div
+                    id="collapseOne"
+                    class="collapse"
+                    role="tabpanel"
+                    aria-expanded="false"
+                    aria-labelledby="headingOne"
+                  >
+                    <div class="card-block">
+                      <div v-if="theSelectedLanguage === 'en'">
+                        <div v-if="clickedResearcher.biography.academic_biography.en">
+                          <div v-html="clickedResearcher.biography.academic_biography.en"></div>
+                        </div>
+                        <div v-else>
+                          <div class="disclaimer">{{ $t("message.LANGUAGE-DISCLAIMER") }}</div>
+                          <div v-html="clickedResearcher.biography.academic_biography.fr"></div>
+                        </div>
+                      </div>
+
+                      <div v-if="theSelectedLanguage === 'fr'">
+                        <div v-if="clickedResearcher.biography.academic_biography.fr">
+                          <div v-html="clickedResearcher.biography.academic_biography.fr"></div>
+                        </div>
+                        <div v-else>
+                          <div class="disclaimer">{{ $t("message.LANGUAGE-DISCLAIMER") }}</div>
+                          <div v-html="clickedResearcher.biography.academic_biography.en"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  v-if="clickedResearcher.research_description && clickedResearcher.research_description.research_description"
+                  id="profileResearchDescription"
+                  class="card"
+                >
+                  <div
+                    id="headingTwo"
+                    class="card-header"
+                    role="tab"
+                  >
+                    <h5 class="mb-0">
+                      <a
+                        href="#collapseTwo"
+                        class="collapsed"
+                        data-toggle="collapse"
+                        data-parent="#accordion"
+                        aria-expanded="false"
+                        aria-controls="collapseTwo"
+                        ga-on="click"
+                        ga-event-category="Researcher description link"
+                        ga-event-action="Open panel to view the researchers research description"
+                      >
+                        {{ $t("message.RESEARCH-DESCRIPTION") }}
+                      </a>
+                    </h5>
+                  </div>
+
+                  <div
+                    id="collapseTwo"
+                    class="collapse"
+                    role="tabpanel"
+                    aria-labelledby="headingTwo"
+                  >
+                    <div class="card-block">
+                      <div v-if="theSelectedLanguage === 'en'">
+                        <div v-if="clickedResearcher.research_description.research_description.en">
+                          <div v-html="clickedResearcher.research_description.research_description.en"></div>
+                        </div>
+                        <div v-else>
+                          <div class="disclaimer">{{ $t("message.LANGUAGE-DISCLAIMER") }}</div>
+                          <div v-html="clickedResearcher.research_description.research_description.fr"></div>
+                        </div>
+                      </div>
+
+                      <div v-if="theSelectedLanguage === 'fr'">
+                        <div v-if="clickedResearcher.research_description.research_description.fr">
+                          <div v-html="clickedResearcher.research_description.research_description.fr"></div>
+                        </div>
+                        <div v-else>
+                          <div class="disclaimer">{{ $t("message.LANGUAGE-DISCLAIMER") }}</div>
+                          <div v-html="clickedResearcher.research_description.research_description.en"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  v-if="clickedResearcher.selected_publications"
+                  id="profileSelectedPublications"
+                  class="card"
+                >
+                  <div class="card-header" role="tab" id="headingThree">
+                    <h5 class="mb-0">
+                      <a
+                        href="#collapseThree"
+                        class="collapsed"
+                        data-toggle="collapse"
+                        data-parent="#accordion"
+                        aria-expanded="false"
+                        aria-controls="collapseThree"
+                        ga-on="click"
+                        ga-event-category="Researcher publications link"
+                        ga-event-action="Open panel to view the researchers publications"
+                      >
+                        {{ $t("message.PUBLICATIONS") }}
+                      </a>
+                    </h5>
+                  </div>
+
+                  <div id="collapseThree" class="collapse" role="tabpanel" aria-labelledby="headingThree">
+                    <div class="card-block">
+                      <div v-if="clickedResearcher.selected_publications.journal_articles">
+                        <h6>{{ $t("message.JOURNAL-ARTICLES") }}</h6>
+                        <div v-for="(journal_article, index) of clickedResearcher.selected_publications.journal_articles">
+                          <hr v-if="index>0">
+                          <p class="title">{{ $t("message.PUBLICATION-TITLE") }} {{ journal_article.journal }}</p>
+                          <p class="date">{{ $t("message.PUBLICATION-DATE") }} {{ journal_article.date }}</p>
+                          <p class="title">{{ $t("message.ARTICLE-TITLE") }} {{ journal_article.article_title }}</p>
+                        </div>
+                      </div>
+                      <hr v-if="clickedResearcher.selected_publications.journal_articles && clickedResearcher.selected_publications.conference_publications">
+                      <div v-if="clickedResearcher.selected_publications.conference_publications">
+                        <h6>{{ $t("message.CONFERENCE-PUBLICATIONS") }}</h6>
+                        <div v-for="(conference_publication, index) of clickedResearcher.selected_publications.conference_publications">
+                          <hr v-if="index>0">
+                          <p class="title">{{ $t("message.CONFERENCE-NAME") }} {{ conference_publication.conference_name }}</p>
+                          <p class="date">{{ $t("message.CONFERENCE-DATE") }} {{ conference_publication.conference_date }}</p>
+                          <p class="title">{{ $t("message.CONFERENCE-TITLE") }} {{ conference_publication.conference_title }}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  v-if="clickedResearcher.research_funding_history !== null"
+                  id="profileGrants"
+                  class="card"
+                >
+                  <div class="card-header" role="tab" id="headingThree">
+                    <h5 class="mb-0">
+                      <a
+                        href="#collapseFour"
+                        class="collapsed"
+                        data-toggle="collapse"
+                        data-parent="#accordion"
+                        aria-expanded="false"
+                        aria-controls="collapseFour"
+                        ga-on="click"
+                        ga-event-category="Researcher grants link"
+                        ga-event-action="Open panel to view the researchers grants"
+                      >
+                        {{ $t("message.GRANT") }}
+                      </a>
+                    </h5>
+                  </div>
+
+                  <div id="collapseFour" class="collapse" role="tabpanel" aria-labelledby="headingThree">
+                    <div class="card card-block" v-for="fundingItem of clickedResearcher.research_funding_history">
+                      <p><strong>{{ $t("message.FUNDING-TITLE") }}</strong> {{ fundingItem.funding_title }}</p>
+                      <p v-if="fundingItem.grant_type">
+                        <strong>{{ $t("message.FUNDING-GRANT-TYPE") }}</strong>
+                        {{ fundingItem.grant_type[1] }}
+                      </p>
+                      <div v-if="fundingItem.project_description != null">
+                        <div v-if="theSelectedLanguage === 'en'">
+                          <p v-if="fundingItem.project_description.english != ''">
+                            <strong>{{ $t("message.FUNDING-PROJECT-DESCRIPTION") }}</strong>
+                            <span v-html="fundingItem.project_description.english"></span>
+                          </p>
+                        </div>
+
+                        <div v-if="theSelectedLanguage === 'fr'">
+                          <p v-if="fundingItem.project_description.french != ''">
+                            <strong>{{ $t("message.FUNDING-PROJECT-DESCRIPTION") }}</strong>
+                            <span v-html="fundingItem.project_description.french"></span>
+                          </p>
+                        </div>
+                      </div>
+
+                      <p>
+                        <strong>{{ $t("message.FUNDING-START-DATE") }}</strong>
+                        {{ fundingItem.funding_start_date }}
+                      </p>
+                      <p>
+                        <strong>{{ $t("message.FUNDING-END-DATE") }}</strong>
+                        {{ fundingItem.funding_end_date }}
+                      </p>
+                      <p v-if="fundingItem.funding_type">
+                        <strong>{{ $t("message.FUNDING-TYPE") }}</strong>
+                        {{ fundingItem.funding_type[1] }}
+                      </p>
+                      <div v-if="fundingItem.funding_sources">
+                        <p>
+                          <strong>{{ $t("message.FUNDING-PROGRAM-NAME") }}</strong>
+                          {{ fundingItem.funding_sources[0].program_name }}
+                        </p>
+                        <p v-if="fundingItem.funding_sources[0].funding_organization">
+                          <strong>{{ $t("message.FUNDING-PROGRAM-ORGANIZATION") }}</strong>
+                          {{ fundingItem.funding_sources[0].funding_organization[1] }}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            </div>
+            <!-- end modal-body -->
+
+            <!-- start modal-footer -->
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                v-bind:disabled="prevButtonDisabled"
+                @click="viewResearcherProfile(prevResearcherId)"
+                ga-on="click"
+                ga-event-category="Previous button"
+                ga-event-action="clicked to view previous researcher in the list"
+              >{{ $t("message.PREVIOUS") }}</button>
+              <button
+                type="button"
+                class="btn btn-secondary"
+                v-bind:disabled="nextButtonDisabled"
+                @click="viewResearcherProfile(nextResearcherId)"
+                ga-on="click"
+                ga-event-category="Next button"
+                ga-event-action="clicked to view next researcher in the list"
+              >{{ $t("message.NEXT") }}</button>
+            </div>
+            <!-- end modal-footer -->
+
+          </div>
+        </div>
+      </div>
+      <!-- end modalResearcherProfile -->
+
+      <!-- start modalStudentProfile -->
+      <div
+        v-if="role === 'student' || role === ''"
+        id="modalStudentProfile"
+        class="modal fade"
+        tabindex="-1"
+        role="dialog"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <!-- start modal-header -->
+            <div class="modal-header">
+              <button
+                v-if="profile == false"
+                type="button"
+                class="close"
+                @click.prevent="logout()"
+                data-dismiss="modal"
+                aria-label="Close"
+                ga-on="click"
+                ga-event-category="Close button"
+                ga-event-action="Close student profile alert and logout (create profile)"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+
+              <button
+                v-if="profile == true"
+                type="button"
+                class="close"
+                data-dismiss="modal"
+                aria-label="Close"
+                ga-on="click"
+                ga-event-category="Close button"
+                ga-event-action="Close student profile alert (edit profile)"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+
+              <h4
+                v-if="profile !== true"
+                class="modal-title"
+              >{{ $t("message.CREATE-YOUR-PROFILE") }}</h4>
+              <h4
+                v-else
+                class="modal-title"
+              >{{ $t("message.EDIT-PROFILE") }}</h4>
+
+            </div>
+            <!-- end modal-header -->
+
+            <!-- start modal-body -->
+            <div class="modal-body">
+
+              <article
+                v-if="profile === true && role === 'student'"
+                id="StudentProfile"
+              >
+                <!-- start section name display/edit -->
+                <section class="card card-block name-block">
+                  <p v-if=" name != ''">
+                    {{ $t("message.NAME") }}{{ $t("message.COLON") }}
+                    {{ name }}
+                    <a
+                      class="btn-sm btn-delete"
+                      data-toggle="collapse"
+                      href="#editName"
+                      aria-expanded="false"
+                      ga-on="click"
+                      ga-event-category="Edit name link"
+                      ga-event-action="Clicked edit name link"
+                    >
+                      <span class="fa fa-edit" aria-hidden="true"></span>{{ $t("message.EDIT-NAME") }}
+                    </a>
+                  </p>
+                  <section v-else class="form-group">
+                    <div class="input-group">
+                      <label for="name">{{ $t("message.NAME") }}</label>
+                      <input type="text" class="form-control" v-model="name" id="nameOne"> <!-- v-bind:value="name" -->
+                    </div>
+                  </section>
+
+                  <!-- start section editName -->
+                  <section class="collapse form-group" id="editName">
+                    <div class="input-group">
+                      <label for="name"></label>
+                      <input type="text" class="form-control" v-model="name" id="nameOne">
+                    </div>
+                  </section>
+                  <!-- end section editName -->
+                </section>
+                <!-- end section name display/edit -->
+
+                <!-- start section level of instruction -->
+                <section class="card level-block card-block">
+                  <p>{{ $t("message.LEVEL") }}</p>
+                  <div class="btn-group">
+                    <label for="levelRadios1"
+                      class="btn btn-secondary"
+                      v-bind:class="{'active': levelOfInstruction === 'phd'}"
+                    >
+                      <input
+                        id="levelRadios1"
+                        name="level_of_instruction"
+                        type="radio"
+                        v-model="levelOfInstruction"
+                        value="phd"
+                        ga-on="click"
+                        ga-event-category="radio button for level of instruction"
+                        ga-event-action="Changed level of instruction to Ph.D."
+                      >
+                      {{ $t("message.PHD") }}
+                    </label>
+
+                    <label for="levelRadios2"
+                      class="btn btn-secondary"
+                      v-bind:class="{'active': levelOfInstruction === 'msc'}"
+                    >
+                      <input
+                        id="levelRadios2"
+                        name="level_of_instruction"
+                        type="radio"
+                        v-model="levelOfInstruction"
+                        value="msc"
+                        ga-on="click"
+                        ga-event-category="radio button for level of instruction"
+                        ga-event-action="Changed level of instruction to M.Sc."
+                      >
+                      {{ $t("message.MSC") }}
+                    </label>
+                  </div>
+                </section>
+                <!-- end section level of instruction -->
+
+                <!-- start section admitted to program -->
+                <section id="admittedToProgram" class="card admittedTo-block card-block">
+                  <p>{{ $t("message.ADMITTED") }}</p>
+
+                  <fieldset id="admitted">
+                    <legend class="sr-only sr-only-focusable">{{ $t("message.ADMITTED") }}</legend>
+                    <div
+                      v-for="(admittedItem, index) in isAdmitted"
+                      v-if="admittedItem.lang===theSelectedLanguage"
+                    >
+                      <input
+                        v-bind:id="'is_admitted-'+index"
+                        name="is_admitted"
+                        type="radio"
+                        v-bind:value="admittedItem.code"
+                        v-bind:checked="admittedItem.code == admitted"
+                        ga-on="click"
+                        ga-event-category="radio button for admitted to status"
+                        ga-event-action="Changed admitted to status"
+                      >
+                      <label v-bind:for="'is_admitted-'+index">{{ admittedItem.name }}</label>
+                    </div>
+                  </fieldset>
+                </section>
+                <!-- end section admitted to program -->
+
+                <!-- start section cv upload -->
+                <section id="program" class="card program-block card-block">
+                  <p>{{ $t("message.PROGRAM") }}</p>
+                  <div class="showSelectMenu">
+                    <select
+                      v-model="programAdmitted"
+                      class="form-control"
+                      ga-on="click"
+                      ga-event-category="Select menu choice of programs"
+                      ga-event-action="Changed specific program selection"
+                    >
+                      <option value="">
+                        {{ $t("message.SELECT-PROGRAM") }}
+                      </option>
+                      <option
+                        v-for="program in programs"
+                        v-if="program.lang===theSelectedLanguage"
+                        v-bind:value="program.code"
+                      >
+                        {{ program.name }}
+                      </option>
+                    </select>
+                  </div>
+                </section>
+
+                <section id="cvUpload" class="card card-block cv-block">
+                  <div
+                    v-if="studentHasCv === true"
+                    id="cvFile"
+                  >
+                    <p>{{ $t("message.CV") }}
+                      <a
+                        v-for="cv in cvStudent"
+                        v-bind:href="be_url+'/students/'+encodeURIComponent(username)+'/cvs/'+cv"
+                        target="_blank"
+                        class="label label-pill label-secondary"
+                        ga-on="click"
+                        ga-event-category="CV link"
+                        ga-event-action="Clicked to download CV"
+                      >
+                        {{ truncate(cv, 10) }}
+                        <span class="fa fa-download" aria-hidden="true"></span>
+                      </a>
+                      <a
+                        v-for="cv in cvStudent"
+                        href="#"
+                        class="btn-sm btn-delete"
+                        @click.prevent="deleteCv(username, cv)"
+                        ga-on="click"
+                        ga-event-category="Delete cv link"
+                        ga-event-action="Clicked to remove the added CV"
+                      >
+                        {{ $t("message.DELETE") }}
+                        <span class="fa fa-times"></span>
+                      </a>
+                    </p>
+                  </div>
+                  <div
+                    v-if="studentHasCv === false"
+                    class="upload-block"
+                  >
+                    <form id="cvupload" method="POST" enctype="multipart/form-data">
+                      <fieldset>
+                        <p>
+                          {{ $t("message.CV") }}
+                          <span class="small">{{ $t("message.CV-WORD-PDF") }}</span>
+                        </p>
+                        <div class="form-group">
+                          <label for="cv" class="btn btn-secondary fileinput-button file cvFile">
+                            {{ $t("message.UPLOAD-CV") }}
+                          </label>
+                          <input
+                            id="cv"
+                            name="cv"
+                            type="file"
+                            style="visibility:hidden"
+                            @change="uploadCv(username, $event)">
+                            ga-on="click"
+                            ga-event-category="Upload a CV"
+                            ga-event-action="Click to upload a CV"
+                        </div>
+                      </fieldset>
+                    </form>
+                  </div>
+                </section>
+                <!-- end section cv upload -->
+
+                <!-- start section transcript upload -->
+                <section id="transcriptUpload" class="card card-block transcript-block">
+                  <p>{{ $t("message.TRANSCRIPTS") }}
+                    <span class="small">{{ $t("message.TRANSCRIPTS-WORD-PDF") }}</span>
+                  </p>
+                  <div v-for="files in transcriptsStudent">
+                    <div v-for="transcripts in transcriptsStudent">
+                      <p v-for="transcript in transcripts">
+                        <a
+                          v-bind:href="be_url+'/students/'+encodeURIComponent(username)+'/transcripts/'+transcript"
+                          target="_blank"
+                          class="label label-pill label-secondary"
+                          ga-on="click"
+                          ga-event-category="Transcript link"
+                          ga-event-action="Clicked to download a transcript"
+                        >
+                          {{ truncate(transcript, 10) }}
+                          <span class="fa fa-download" aria-hidden="true"></span>
+                        </a>
+                        <a
+                          href="#"
+                          class="btn-sm btn-delete"
+                          @click.prevent="deleteTranscript(username, transcript, $event)"
+                          ga-on="click"
+                          ga-event-category="Delete transcript"
+                          ga-event-action="Clicked to delete a transcript"
+                        >
+                          {{ $t("message.DELETE") }}
+                          <span class="fa fa-times"></span>
+                        </a>
+                      </p>
+                    </div>
+                  </div>
+                  <div class="upload-block">
+                    <form id="transcriptsUpload" method="POST" enctype="multipart/form-data">
+                      <fieldset>
+                        <div class="form-group">
+                          <label for="transcript" class="btn btn-secondary fileinput-button file transcriptFile">
+                            {{ $t("message.UPLOAD-TRANSCRIPT") }}
+                          </label>
+                          <input
+                            id="transcript"
+                            name="transcript"
+                            type="file"
+                            style="visibility:hidden"
+                            @change="uploadTranscripts(username, $event)"
+                            ga-on="click"
+                            ga-event-category="Upload Transcript button"
+                            ga-event-action="Clicked to download transcript"
+                          >
+                        </div>
+                      </fieldset>
+                    </form>
+                  </div>
+                </section>
+                <!-- end section transcript upload -->
+              </article>
+
+              <article
+                v-if="profile === false"
+                id="StudentProfile"
+              >
+                <!-- start section name display/edit -->
+                <section class="card card-block name-block">
+                  <div class="form-group">
+                    <div class="input-group">
+                      <label for="name">*{{ $t("message.NAME") }}{{ $t("message.COLON") }}</label>
+                      <input type="text" class="form-control" v-model="name" id="name">
+                    </div>
+                  </div>
+
+                  <!-- Begin form-group -->
+                  <div
+                    v-if="internal == false"
+                    class="form-group"
+                  >
+                    <label for="password">*{{ $t("message.CREATE-NEW-PW") }}
+                      <span class="viewPassWordContainer">
+                        <a
+                          v-if="viewPasswordClicked === false"
+                          href="#"
+                          class="btn-viewPassword small"
+                          @click.prevent="viewPassword();"
+                          ga-on="click"
+                          ga-event-category="View Password Link"
+                          ga-event-action="Clicked the view password link in create profile for external"
+                        >
+                          {{ $t("message.VIEW-PW") }}
+                        </a>
+
+                        <a
+                          v-else
+                          href="#"
+                          class="btn-viewPassword small"
+                          @click.prevent="hidePassword();"
+                          ga-on="click"
+                          ga-event-category="Hide Password Link"
+                          ga-event-action="Clicked the hide password link in create profile for external"
+                        >
+                          {{ $t("message.HIDE-PW") }}
+                        </a>
+                      </span>
+                    </label>
+
+                    <!-- Begin input-group -->
+                    <div class="input-group pass">
+                      <input type="password" class="form-control" id="passwordExt" value="" maxlength="72" tabindex=2>
+                    </div>
+                    <!-- End input-group -->
+                  </div>
+                  <!-- End form-group -->
+                </section>
+                <!-- end section name display/edit -->
+
+                <!-- start section level of instruction -->
+                <section class="card card-block level-block">
+                  <p>{{ $t("message.LEVEL") }}</p>
+                  <div class="btn-group" data-toggle="buttons">
+                    <label for="levelRadios1"
+                      class="btn btn-secondary"
+                      v-on:click="levelOfInstruction = 'phd'"
+                    >
+                      <input
+                        id="levelRadios1"
+                        name="level_of_instruction"
+                        type="radio"
+                        v-model="levelOfInstruction"
+                        value="phd"
+                        ga-on="click"
+                        ga-event-category="radio button for level of instruction"
+                        ga-event-action="Chose level of instruction Ph.D."
+                      >
+                      {{ $t("message.PHD") }}
+                    </label>
+
+                    <label for="levelRadios2" class="btn btn-secondary" v-on:click="levelOfInstruction = 'msc'">
+                      <input
+                        id="levelRadios2"
+                        name="level_of_instruction"
+                        type="radio"
+                        v-model="levelOfInstruction"
+                        value="msc"
+                        ga-on="click"
+                        ga-event-category="radio button for level of instruction"
+                        ga-event-action="Chose level of instruction M.Sc."
+                      >
+                      {{ $t("message.MSC") }}
+                    </label>
+                  </div>
+                </section>
+                <!-- end section level of instruction -->
+
+                <!-- start section admitted to program -->
+                <section id="admittedToProgram" class="card admittedTo-block card-block"> <!-- v-if="role === 'student' || role === ''"> -->
+                  <p>{{ $t("message.ADMITTED") }}</p>
+                  <fieldset id="admitted">
+                    <legend class="sr-only sr-only-focusable">{{ $t("message.ADMITTED") }}</legend>
+                    <div
+                      v-for="(admittedItem, index) in isAdmitted"
+                      v-if="admittedItem.lang===theSelectedLanguage"
+                    >
+                      <input
+                        v-bind:id="'is_admitted_1-'+index"
+                        name="is_admitted"
+                        type="radio"
+                        v-bind:value="admittedItem.code"
+                        ga-on="click"
+                        ga-event-category="radio button for admitted to status"
+                        ga-event-action="Chose admitted to status"
+                      >
+                      <label v-bind:for="'is_admitted_1-'+index">{{ admittedItem.name }}</label><br>
+                    </div>
+                  </fieldset>
+                </section>
+                <!-- end section admitted to program -->
+
+                <!-- start section cv upload -->
+                <section id="program" class="card program-block card-block">
+                  <p>{{ $t("message.PROGRAM") }}</p>
+                  <div class="showSelectMenu">
+                    <select
+                      class="form-control"
+                      v-model="programAdmitted"
+                      ga-on="click"
+                      ga-event-category="Select menu choice of programs"
+                      ga-event-action="Selected a specific program"
+                    >
+                      <option value="">
+                        {{ $t("message.SELECT-PROGRAM") }}
+                      </option>
+                      <option
+                        v-for="program in programs"
+                        v-if="program.lang===theSelectedLanguage"
+                        v-bind:value="program.code"
+                      >
+                        {{ program.name }}
+                      </option>
+                    </select>
+                  </div>
+                </section>
+
+                <!-- start section cv upload -->
+                <section id="cvUpload" class="card card-block cv-block">
+                  <div v-if="studentHasCv === true" id="cvFile">
+                    <p>{{ $t("message.CV") }}
+                      <a
+                        v-for="cv in cvStudent"
+                        v-bind:href="be_url+'/students/'+encodeURIComponent(username)+'/cvs/'+cv"
+                        target="_blank"
+                        class="label label-pill label-secondary"
+                        ga-on="click"
+                        ga-event-category="CV link"
+                        ga-event-action="Clicked to download CV"
+                      >
+                        {{ truncate(cv, 10) }}
+                        <span class="fa fa-download" aria-hidden="true"></span>
+                      </a>
+                      <a
+                        v-for="cv in cvStudent"
+                        href="#"
+                        class="btn-sm btn-delete"
+                        @click.prevent="deleteCv(username, cv)"
+                        ga-on="click"
+                        ga-event-category="Delete CV link"
+                        ga-event-action="Clicked to delete CV"
+                      >
+                        {{ $t("message.DELETE") }}
+                        <span class="fa fa-times"></span>
+                      </a>
+                    </p>
+                  </div>
+
+                  <div v-if="studentHasCv === false" class="upload-block cv-block">
+                    <form id="cvupload" method="POST" enctype="multipart/form-data">
+                      <fieldset>
+                        <p>{{ $t("message.CV") }} <span class="small">{{ $t("message.CV-WORD-PDF") }}</span></p>
+                        <div class="form-group">
+                          <label for="cv" class="btn btn-secondary fileinput-button file cvFile">
+                            {{ $t("message.UPLOAD-CV") }}
+                          </label>
+                          <input
+                            id="cv"
+                            name="cv"
+                            type="file"
+                            style="visibility:hidden;"
+                            @change="uploadCv(username, $event)"
+                            ga-on="click"
+                            ga-event-category="Upload CV button"
+                            ga-event-action="Clicked to upload a CV"
+                          >
+                        </div>
+                      </fieldset>
+                    </form>
+                  </div>
+                </section>
+                <!-- end section cv upload -->
+
+                <!-- start section transcript upload -->
+                <section id="transcriptUpload" class="card card-block transcript-block">
+                  <p>
+                    {{ $t("message.TRANSCRIPTS") }}
+                    <span class="small">{{ $t("message.TRANSCRIPTS-WORD-PDF") }}</span>
+                  </p>
+                  <div v-for="transcripts in transcriptsStudent">
+                    <p v-for="transcript in transcripts">
+                      <a
+                        v-bind:href="be_url+'/students/'+encodeURIComponent(username)+'/transcripts/'+transcript"
+                        target="_blank"
+                        class="label label-pill label-secondary"
+                        ga-on="click"
+                        ga-event-category="Transcript link"
+                        ga-event-action="Clicked to download transcript"
+                      >
+                        {{ truncate(transcript, 10) }} <span class="fa fa-download" aria-hidden="true"></span>
+                      </a>
+
+                      <a
+                        href="#"
+                        class="btn-sm btn-delete"
+                        @click.prevent="deleteTranscript(username, transcript, $event)"
+                        ga-on="click"
+                        ga-event-category="Delete transcript link"
+                        ga-event-action="Clicked to delete a transcript"
+                      >
+                        {{ $t("message.DELETE") }} <span class="fa fa-times"></span>
+                      </a>
+                    </p>
+                  </div>
+
+                  <div class="upload-block">
+                    <form id="transcriptsUpload" method="POST" enctype="multipart/form-data">
+                      <fieldset>
+                        <div class="form-group">
+                          <label for="transcript" class="btn btn-secondary fileinput-button file transcriptFile">
+                            {{ $t("message.UPLOAD-TRANSCRIPT") }}
+                          </label>
+                          <input
+                            id="transcript"
+                            name="transcript"
+                            type="file"
+                            style="visibility:hidden;"
+                            @change="uploadTranscripts(username, $event)"
+                            ga-on="click"
+                            ga-event-category="Upload transcript button"
+                            ga-event-action="Clicked to upload a transcript"
+                          >
+                        </div>
+                      </fieldset>
+                    </form>
+                  </div>
+                </section>
+                <!-- end section transcript upload -->
+              </article>
+
+              <div
+                v-if="updateProfileFailed"
+                id="externalLoginFailedAlert"
+                class="alert alert-warning alert-dismissible fade in"
+                role="alert"
+              >
+                <button
+                  v-if="noNameAndPassword == true"
+                  type="button"
+                  class="close"
+                  data-dismiss="alert"
+                  aria-label="Close"
+                  ga-on="click"
+                  ga-event-category="Close alert message"
+                  ga-event-action="Closed the alert window"
+                >
+                  <span aria-hidden="true">&times;</span>
+                </button>
+                <p v-if="noNameAndPassword == false">
+                  {{ $t("message.PROFILE-INCOMPLETE") }}
+                </p>
+                <button
+                  v-if="noNameAndPassword == false"
+                  type="button"
+                  class="btn btn-default"
+                  onclick="$('.alert').hide()"
+                  ga-on="click"
+                  ga-event-category="Alert message for profile incomplete"
+                  ga-event-action="Clicked no to continue filling in profile information"
+                >
+                  {{ $t("message.NO") }}
+                </button>
+                <button
+                  v-if="noNameAndPassword == false"
+                  type="button"
+                  class="btn btn-danger"
+                  @click="confirmIncompleteProfile(username)"
+                  ga-on="click"
+                  ga-event-category="Alert message for profile incomplete"
+                  ga-event-action="Clicked yes to create the profile with incomplete fields"
+                >
+                  {{ $t("message.YES") }}
+                </button>
+                <p v-if="noNameAndPassword == true">{{ $t("message.MANDATORY-FIELDS") }}</p>
+              </div>
+            </div>
+            <!-- end modal-body -->
+
+            <!-- start modal-footer -->
+            <div class="modal-footer">
+              <button
+                v-if="profile != true"
+                id="btn-createProfile"
+                type="button"
+                class="btn btn-primary"
+                @click="createProfile(username, fromEmailLink, false)"
+                ga-on="click"
+                ga-event-category="Continue button for creating a profile"
+                ga-event-action="Clicked to create the profile"
+              >{{ $t("message.CONTINUE") }}</button>
+              <button
+                v-if="profile == true"
+                id="btn-updateProfile"
+                type="button"
+                class="btn btn-primary"
+                @click="updateProfile(username, false)"
+                ga-on="click"
+                ga-event-category="Save profile button"
+                ga-event-action="Clicked to update the profile"
+              >
+                {{ $t("message.SAVE") }}
+              </button>
+            </div>
+            <!-- end modal-footer -->
+
+          </div>
+        </div>
+      </div>
+      <!-- end modalStudentProfile -->
+
+      <!--start modallogin -->
+      <div class="modal fade" id="modalLogin" tabindex="-1" role="dialog">
+        <div class="modal-background"></div>
+
+        <!-- start modal-dialog -->
+        <div class="modal-dialog" role="document">
+          <!-- start modal-content -->
+          <div class="modal-content">
+
+            <!-- start modal-header -->
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click.prevent="logout()">
+                <span aria-hidden="true">&times;</span>
+              </button>
+              <img
+                src="/assets/images/facMed-hor.svg"
+                onerror="this.onerror=null;this.src='/assets/images/FacMed-HorCMYK_coated.png'"
+                v-bind:alt="'uOttawa ' + $t('message.FACULTY-OF-MEDICINE')"
+              >
+              <h2 class="modal-title">
+                {{ $t("message.GRAD-STUDIES") }}
+                <br>
+                {{ $t("message.TSS") }}
+              </h2>
+              <p v-if="loggedIn === false">
+                <span v-if="clickedResearcherName !== ''">
+                  {{ $t("message.IN-ORDER-TO-CONTACT") }} {{ clickedResearcherName }}
+                </span>
+                <span v-if="clickedResearcherName === ''">
+                  {{ $t("message.IN-ORDER-TO-CONTACT-RESEARCHER") }}
+                </span>
+                <br>
+                {{ $t("message.LOG-IN-OR-CREATE") }}
+              </p>
+            </div>
+            <!-- end modal-header -->
+
+            <!-- start modal-body -->
+            <div class="modal-body">
+
+              <!-- start loginContainer -->
+              <article id="loginContainer">
+
+                <div id="accordion" role="tablist" aria-multiselectable="true">
+                  <div class="card">
+                    <div class="card-header" role="tab" id="headingOne">
+                      <h5 class="mb-0">
+                        <a
+                          href="#haveAccount"
+                          data-toggle="collapse"
+                          data-parent="#accordion"
+                          aria-expanded="true"
+                          aria-controls="haveAccount"
+                        >
+                          {{ $t("message.DO-HAVE") }}
+                        </a>
+                      </h5>
+                    </div>
+
+                    <div id="haveAccount" class="collapse show" role="tabpanel" aria-labelledby="headingOne">
+                      <div class="card-block">
+                        <div
+                          v-if="internal == true && loginFailed"
+                          id="internalLoginFailedAlert"
+                          class="row alert alert-danger alert-dismissible fade in"
+                          role="alert"
+                        >
+                          <p>{{ $t("message.LOG-IN-FAILED") }}</p>
+                        </div>
+
+                        <!-- Begin form -->
+                        <form v-on:submit.prevent="authorize()">
+                          <fieldset>
+                            <!-- Begin form-group -->
+                            <div class="form-group">
+                              <label for="username">{{ $t("message.USERNAME") }} </label>
+                              <!-- Begin input-group -->
+                              <div class="input-group">
+                                <input type="text" class="form-control" tabindex=1 id="username">
+                                <span class="input-group-addon" id="sizing-addon2">@uottawa.ca</span>
+                              </div>
+                              <!-- End input-group -->
+                            </div>
+                            <!-- End form-group -->
+
+                            <!-- Begin form-group -->
+                            <div class="form-group">
+                              <label for="password">{{ $t("message.PASSWORD") }}
+                                <span class="viewPassWordContainer">
+                                  <a
+                                    v-if="viewPasswordClicked === false"
+                                    href="#"
+                                    class="btn-viewPassword small"
+                                    @click.prevent="viewPassword();"
+                                    ga-on="click"
+                                    ga-event-category="View Password link"
+                                    ga-event-action="Clicked view password"
+                                  >
+                                    {{ $t("message.VIEW-PW") }}
+                                  </a>
+
+                                  <a
+                                    v-else
+                                    href="#"
+                                    class="btn-viewPassword small"
+                                    @click.prevent="hidePassword();"
+                                    ga-on="click"
+                                    ga-event-category="Hide Password link"
+                                    ga-event-action="Clicked hide password"
+                                  >
+                                    {{ $t("message.HIDE-PW") }}
+                                  </a>
+                                </span>
+                              </label>
+
+                              <!-- Begin input-group -->
+                              <div class="input-group pass">
+                                <input type="password" class="form-control" id="password" maxlength="72" tabindex=2>
+                              </div>
+                              <!-- End input-group -->
+
+                            </div>
+                            <!-- End form-group -->
+
+                            <!-- Begin form-group -->
+                            <div class="form-group">
+                              <!-- Begin input-group -->
+                              <div class="input-group">
+                                <label for="rememberMe">
+                                  <input id="rememberMe" value="remember-me" type="checkbox" tabindex=3 v-bind:checked="rememberMe">
+                                  {{ $t("message.REMEMBER-ME") }}
+                                </label>
+                              </div>
+                              <!-- End input-group -->
+
+                            </div>
+                            <!-- End form-group -->
+
+                            <button
+                              type="submit"
+                              class="btn btn-primary btn-block"
+                              tabindex=4
+                              ga-on="click"
+                              ga-event-category="Login button for uOttawa students"
+                              ga-event-action="Clicked login as a uottawa student"
+                            >
+                              {{ $t("message.CONTINUE") }}
+                            </button>
+                            <p>
+                              <a href="https://app.med.uottawa.ca/PasswordReset/" target="_blank" class="btn-forgotPassword">
+                                {{ $t("message.FORGOT-PW") }}
+                              </a>
+                            </p>
+
+                          </fieldset>
+                        </form>
+                        <!-- End form -->
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="card">
+                    <div class="card-header" role="tab" id="headingTwo">
+                      <h5 class="mb-0">
+                        <a
+                          href="#dontHaveAccount"
+                          class="collapsed"
+                          data-toggle="collapse"
+                          data-parent="#accordion"
+                          aria-expanded="false"
+                          aria-controls="dontHaveAccount"
+                        >
+                          {{ $t("message.DONT-HAVE") }}
+                        </a>
+                      </h5>
+                    </div>
+                    <div id="dontHaveAccount" class="collapse" role="tabpanel" aria-labelledby="headingTwo">
+                      <div class="card-block">
+                        <!-- Not Started -->
+
+                        <div
+                          v-if="internal == false && loginFailed && loginState != 'InvalidKey' && loginState != 'PasswordSent' && loginState != 'ResetSent'"
+                          id="externalLoginFailedAlert"
+                          class="row alert alert-danger alert-dismissible fade in"
+                          role="alert"
+                        >
+                          <p>{{ $t("message.LOG-IN-FAILED") }}</p>
+                        </div>
+
+                        <div
+                          v-if="createAccountFailed"
+                          id="externalcreateAccountFailedAlert"
+                          class="row alert alert-danger alert-dismissible fade in"
+                          role="alert"
+                        >
+                          <p>{{ $t("message.CREATE-ACCOUNT-FAILED") }}</p>
+                        </div>
+
+                        <div
+                          v-if="loginState === 'notStarted' || loginState === 'PasswordSent'|| loginState === 'EmailSent' || loginState === 'EmailFound' || loginState === 'EmailNotFound' || loginState === 'InvalidKey' || loginState === 'ResetSent' || loginState === 'NewPasswordCreation'"
+                          id="createAccountContainer"
+                        >
+
+                          <p v-if="loginState === 'notStarted'">
+                            {{ $t("message.ENTER-EMAIL-INSTRUCTIONS") }}
+                          </p>
+
+                          <p
+                            v-if="loginState === 'EmailNotFound'"
+                            class="alertNotificationInstruction"
+                          >
+                            {{ $t("message.THIS-ADDRESS") }}
+                            <strong> {{ email }} </strong>
+                            {{ $t("message.THIS-ADDRESS-NOT-EXIST") }}
+                          </p>
+
+                          <p
+                            v-if="loginState === 'EmailSent'"
+                            class="alertNotificationInstruction"
+                          >
+                            {{ $t("message.VERIFICATION-SENT") }}
+                            <strong>{{ email }}</strong>
+                            {{ $t("message.CONT-CREATE") }}
+                            {{ $t("message.CHECK-INBOX") }}
+                          </p>
+
+                          <p
+                            v-if="loginState === 'InvalidKey'"
+                            class="alertNotificationError"
+                          >
+                            {{ $t("message.THE-KEY") }}
+                            <strong><i>{{ code }}</i></strong>
+                            {{ $t("message.IS-INVALID") }}
+                            {{ $t("message.IF-COPY-PASTE") }}
+                          </p>
+
+                          <p
+                            v-if="loginState === 'PasswordSent'"
+                            class="alertNotificationInstruction"
+                          >
+                            {{ $t("message.VERIFICATION-SENT") }}
+                            <strong>{{ email }}</strong>
+                            {{ $t("message.PASSWORD-RESET") }}
+                            {{ $t("message.CHECK-INBOX") }}
+                          </p>
+
+                          <p
+                            v-if="loginState === 'ResetSent'"
+                            class="alertNotificationInstruction"
+                          >
+                            {{ $t("message.TY") }}
+                            {{ $t("message.EMAILED-LINK") }}
+                            <strong>{{ email }}</strong>
+                            {{ $t("message.CONT-RESET") }}
+                            {{ $t("message.CHECK-INBOX") }}
+                            {{ $t("message.IF-DONT-RECEIVE") }}
+                            {{ $t("message.RESEND") }}
+                          </p>
+
+                          <!-- Begin form-group -->
+                          <div class="form-group">
+
+                            <!-- Begin input-group -->
+                            <div
+                              v-if="loginState === 'notStarted' || loginState === 'EmailSent' || loginState === 'EmailFound' || loginState === 'EmailNotFound' || loginState === 'ResetSent'"
+                              class="input-group"
+                            >
+                              <label class="text-left" for="email">
+                                {{ $t("message.EMAIL") }}{{ $t("message.COLON") }}
+                                <input type="email" class="form-control" id="email" v-bind:value="username">
+                              </label>
+                            </div>
+                            <!-- End input-group -->
+                          </div>
+                          <!-- End form-group -->
+
+                          <!-- Begin form-group -->
+                          <div
+                            v-if=" loginState === 'NewPasswordCreation'|| loginState === 'EmailFound'"
+                            class="form-group"
+                          >
+
+                            <!-- Begin input-group -->
+                            <div class="input-group pass">
+                              <label class="text-left" for="thePassword">
+                                {{ $t("message.PASSWORD") }}
+                              </label>
+                              <span class="viewPassWordContainer">
+                                <a
+                                  v-if="viewPasswordClicked === false"
+                                  href="#"
+                                  class="btn-viewPassword small"
+                                  @click.prevent="viewPassword();"
+                                  ga-on="click"
+                                  ga-event-category="View password link"
+                                  ga-event-action="Clicked view password link"
+                                >
+                                  {{ $t("message.VIEW-PW") }}
+                                </a>
+                                <a
+                                  v-else
+                                  href="#"
+                                  class="btn-viewPassword small"
+                                  @click.prevent="hidePassword();"
+                                  ga-on="click"
+                                  ga-event-category="Hide Password link"
+                                  ga-event-action="Clicked hide password link"
+                                >
+                                  {{ $t("message.HIDE-PW") }}
+                                </a>
+                              </span>
+                            </div>
+D
+                            <!-- Begin form-group -->
+                            <div class="form-group submitbuttons">
+                              <form id="verify-email" v-on:submit.prevent="onVerifyEmail" v-if="loginState === 'notStarted'">
+                                <button ga-on="click" ga-event-category="Verify button" ga-event-action="Clicked continue to verify if email exist" type="submit" class="btn btn-primary btn-block btn-verifyEmail" >{{$t("message.CONTINUE") }}</button>
+                              </form>
+
+                              <form id="create-account" v-on:submit.prevent="onCreateAccount($event)" v-if="loginState === 'EmailNotFound'">
+                                <button ga-on="click" ga-event-category="Create link" ga-event-action="Clicked continue to create an account"  type="submit" class="btn btn-primary btn-block">{{$t("message.CREATE-ACCOUNT") }}</button>
+                                <button ga-on="click" ga-event-category="cancel button" ga-event-action="Clicked cancel"  type="button" class="btn btn-ternary btn-block" @click="onCancel()">{{$t("message.CANCEL") }}</button>
+                              </form>
+                                <!--verification email (verification code)-->
+
+                              <form id="try-verification-code" v-on:submit.prevent="onVerificationCode($event)" v-if="loginState === 'EmailSent' || loginState === 'InvalidKey' || loginState === 'ResetSent' || loginState === 'PasswordSent'">
+                                <button ga-on="click" ga-event-category="Verification code button" ga-event-action="Clicked continue to verify the verification code"  type="submit" class="btn btn-primary btn-block btn-VerifyCode">{{$t("message.CONTINUE") }}</button>
+                              </form>
+
+                                <!--<button class="btn btn-primary btn-block"  v-if="loginState === 'InvalidKey'" @click="onTryAgain($event)" type="button">Try again{{$t("message.CONTINUE") }}</button>-->
+                              <!--<form id="update-password" v-on:submit.prevent="onUpdatePassword($event)" v-if="loginState === 'PasswordSent'">
+                                <button type="submit" class="btn btn-primary btn-block">{{$t("message.CONTINUE") }}</button>
+                              </form>-->
+
+                              <form id="resend-email" v-if="loginState === 'EmailSent' || loginState === 'InvalidKey' || loginState === 'PasswordSent'">
+                                <button ga-on="click" ga-event-category="Resend email button" ga-event-action="Clicked resend email with verification code"  type="button" @click="onResendEmail($event)" class="btn btn-secondary btn-block">{{$t("message.RESEND-EMAIL") }}</button>
+                              </form>
+
+                              <form id="change-password" v-on:submit.prevent="onChangePassword($event)" v-if="loginState === 'NewPasswordCreation'">
+                                <button ga-on="click" ga-event-category="Change password button" ga-event-action="Clicked change password"  type="submit" class="btn btn-primary btn-block">{{$t("message.CONTINUE") }}</button>
+                              </form>
+
+                              <form id="email-password" v-on:submit.prevent="onEmailPassword($event)" v-if="loginState === 'EmailFound'">
+                                <button ga-on="click" ga-event-category="continue button" ga-event-action="Clicked continue to login as external"  type="submit" class="btn btn-primary btn-block btn-emailFound">{{$t("message.CONTINUE") }}</button>
+                                <a href="#" ga-on="click,auxclick,contextmenu" ga-event-category="Forgot password link" ga-event-action="Clicked forgot password link" @click.prevent="onResetPassword($event)" class="btn-forgotPassword">{{$t("message.FORGOT-PW") }}</a>
+                                <!--@click="onEmailPassword($event)"-->
+                              </form>
+
+                            </div>
+                            <!-- End input-group -->
+                          </div>
+                          <!-- End form-group -->
+
+                          <!-- Begin form-group -->
+                          <div
+                            v-if="loginState === 'EmailSent' || loginState === 'InvalidKey' || loginState === 'ResetSent'|| loginState === 'PasswordSent'"
+                            class="form-group"
+                          >
+                            <!-- Begin input-group -->
+                            <div class="input-group">
+                              <label class="text-left" for="verificationCode">
+                                {{ $t("message.VERIFICATION") }}
+                                <input type="text" value="" class="form-control" id="verificationCode">
+                              </label>
+                            </div>
+                            <!-- End input-group -->
+                          </div>
+                          <!-- End form-group -->
+
+                          <!-- Begin form-group -->
+                          <div class="form-group submitbuttons">
+                            <form id="verify-email"
+                              v-if="loginState === 'notStarted'"
+                              v-on:submit.prevent="onVerifyEmail"
+                            >
+                              <button
+                                type="submit"
+                                class="btn btn-primary btn-block btn-verifyEmail"
+                                ga-on="click"
+                                ga-event-category="Verify button"
+                                ga-event-action="Clicked continue to verify if email exist"
+                              >
+                                {{ $t("message.CONTINUE") }}
+                              </button>
+                            </form>
+
+                            <form
+                              v-if="loginState === 'EmailNotFound'"
+                              id="create-account"
+                              v-on:submit.prevent="onCreateAccount()"
+                            >
+                              <button
+                                type="submit"
+                                class="btn btn-primary btn-block"
+                                ga-on="click"
+                                ga-event-category="Create link"
+                                ga-event-action="Clicked continue to create an account"
+                              >
+                                {{ $t("message.CREATE-ACCOUNT") }}
+                              </button>
+                              <button
+                                type="button"
+                                class="btn btn-ternary btn-block"
+                                @click="onCancel()"
+                                ga-on="click"
+                                ga-event-category="cancel button"
+                                ga-event-action="Clicked cancel"
+                              >
+                                {{ $t("message.CANCEL") }}
+                              </button>
+                            </form>
+
+                            <!--verification email (verification code)-->
+                            <form
+                              v-if="loginState === 'EmailSent' || loginState === 'InvalidKey' || loginState === 'ResetSent' || loginState === 'PasswordSent'"
+                              id="try-verification-code"
+                              v-on:submit.prevent="onVerificationCode()"
+                            >
+                              <button
+                                type="submit"
+                                class="btn btn-primary btn-block btn-VerifyCode"
+                                ga-on="click"
+                                ga-event-category="Verification code button"
+                                ga-event-action="Clicked continue to verify the verification code"
+                              >
+                                {{ $t("message.CONTINUE") }}
+                              </button>
+                            </form>
+
+                            <form
+                              v-if="loginState === 'EmailSent' || loginState === 'InvalidKey' || loginState === 'PasswordSent'"
+                              id="resend-email"
+                            >
+                              <button
+                                type="button"
+                                class="btn btn-secondary btn-block"
+                                @click="onResendEmail($event)"
+                                ga-on="click"
+                                ga-event-category="Resend email button"
+                                ga-event-action="Clicked resend email with verification code"
+                              >
+                                {{ $t("message.RESEND-EMAIL") }}
+                              </button>
+                            </form>
+
+                            <form
+                              v-if="loginState === 'NewPasswordCreation'"
+                              id="change-password"
+                              v-on:submit.prevent="onChangePassword()"
+                            >
+                              <button
+                                type="submit"
+                                class="btn btn-primary btn-block"
+                                ga-on="click"
+                                ga-event-category="Change password button"
+                                ga-event-action="Clicked change password"
+                              >
+                                {{ $t("message.CONTINUE") }}
+                              </button>
+                            </form>
+
+                            <form
+                              v-if="loginState === 'EmailFound'"
+                              id="email-password"
+                              v-on:submit.prevent="onEmailPassword()"
+                            >
+                              <button
+                                type="submit"
+                                class="btn btn-primary btn-block btn-emailFound"
+                                ga-on="click"
+                                ga-event-category="continue button"
+                                ga-event-action="Clicked continue to login as external"
+                              >
+                                {{ $t("message.CONTINUE") }}
+                              </button>
+                              <a
+                                href="#"
+                                class="btn-forgotPassword"
+                                @click.prevent="onResetPassword()"
+                                ga-on="click"
+                                ga-event-category="Forgot password link"
+                                ga-event-action="Clicked forgot password link"
+                              >
+                                {{ $t("message.FORGOT-PW") }}
+                              </a>
+                            </form>
+                          </div>
+                          <!-- End form-group -->
+                        </div>
+                        <!-- End noStarted -->
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </article>
+              <!-- end loginContainer -->
+
+            </div>
+            <!-- end modal-body -->
+          </div>
+          <!-- end modal-content -->
+        </div>
+        <!-- end modal-dialog -->
+      </div>
+      <!--end modallogin -->
+
+      <!-- start modalConversationsNotSigned -->
+      <div
+        id="modalConversationsNotSigned"
+        class="modal fade"
+        tabindex="-1"
+        role="dialog"
+        aria-hidden="true"
+      >
+        <!-- start modal-dialog-->
+        <div class="modal-dialog" role="document">
+          <!-- start modal-content-->
+          <div class="modal-content">
+
+            <!-- start modal-header-->
+            <div class="modal-header">
+              <button
+                type="button"
+                class="close"
+                data-dismiss="modal"
+                v-bind:aria-label="$t('message.CLOSE')"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+
+              <h4
+                v-if="conversationsEmail.is_from_student == false"
+                class="modal-title"
+              >
+                {{ conversationsEmail.student_name }}
+              </h4>
+              <h4
+                v-else
+                class="modal-title"
+              >
+                {{ conversationsEmail.researcher_name }}
+              </h4>
+            </div>
+            <!-- end modal-header-->
+
+            <!-- Start modal body-->
+            <div class="modal-body">
+
+              <!-- Begin Student Conversations -->
+              <article>
+
+                <!-- Start of conversationContainer -->
+                <div class="card card-block">
+
+                  <!-- Start of modalImgContainer -->
+                  <section
+                    v-if="conversationsEmail.is_from_student == false"
+                    class="modalImgContainer"
+                  >
+
+                    <!-- Start of researcher image container -->
+                    <div class="row card card-block">
+                      <div class="col-lg-3 col-md-3 col-sm-3">
+                        <div class="imageContainer text-xs-center">
+                          <img
+                            v-bind:src="'https://uniweb.uottawa.ca/picture.php?action=display&amp;contentType=members&amp;id='+conversationsEmail.researcher_uniweb_number+'&amp;quality=large'"
+                            alt=""
+                            class="img-rounded"
+                          >
+                        </div>
+                      </div>
+                      <!-- End of researcher image container -->
+
+                      <!-- Start of researcher information -->
+                      <div
+                        v-bind:id="'researcherInformation-'+conversationsEmail.researcher_uniweb_number"
+                        class="col-lg-8 col-md-8 col-sm-8"
+                      >
+                        <p>{{ conversationsEmail.researcher_name }}</p>
+                      </div>
+                      <!-- end of researcher information -->
+                    </div>
+                  </section>
+                  <!-- end of modalImgContainer -->
+
+                  <p v-else>{{ conversationsEmail.student_name }}</p>
+
+                  <!-- Start listing the specific researcher conversations -->
+                  <section
+                    v-bind:id="'ConversationsContainer-'+conversationsEmail.researcher_uniweb_number"
+                    class="row card card-block"
+                  >
+
+                    <!-- Start of messages card -->
+                    <p
+                      v-if="conversationsEmail.read_date != null"
+                      class="small viewed text-right"
+                    >
+                      {{ $t("message.VIEWED-ON") }}
+                      {{ formatDate(conversationsEmail.read_date) }}
+                    </p>
+
+                    <p class="small">
+                      {{ $t("message.SENT-ON") }}
+                      {{ formatDate(conversationsEmail.sent_date) }}
+                    </p>
+
+                    <p>{{ conversationsEmail.body }}</p>
+                    <!-- end of messages card -->
+
+                  </section>
+                  <!-- End listing the specific researcher conversations -->
+
+                  <!-- Begin form-group sendMessage-->
+                  <div class="form-group row">
+
+                    <div
+                      v-if="messageSent"
+                      class="alert2 alert alert-success alert-dismissible"
+                      role="alert"
+                    >
+                      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                      {{ $t("message.MESSAGE-SENT") }}
+                    </div>
+
+                    <input type="hidden" id="researcherName" v-bind:value="conversationsEmail.researcher_uniweb_number">
+
+                    <div>
+                      <textarea
+                        v-bind:id="'newmessage-'+conversationsEmail.id"
+                        class="form-control col-md-8"
+                        rows="4"
+                      ></textarea>
+                    </div>
+
+                    <div>
+                      <button
+                        type="submit"
+                        class="btn btn-primary"
+                        @click="sendMessageFromStudent(conversationsEmail.researcher_uniweb_number, conversationsEmail.researcher_name, conversationsEmail.student_username, conversationsEmail.student_name, conversationsEmail.is_from_student)"
+                      >
+                        {{ $t("message.SEND-MESSAGE") }}
+                      </button>
+                    </div>
+                    <!-- </section> -->
+                  </div>
+                  <!-- End form-group sendMessage-->
+                </div>
+                <!-- end of conversationContainer -->
+              </article>
+              <!-- End Student Conversations -->
+            </div>
+            <!-- End modal body-->
+
+            <!-- Start modal footer-->
+            <div class="modal-footer">
+              <button type="button" class="btn btn-ternary" data-dismiss="modal">
+                {{ $t("message.CLOSE") }}
+              </button>
+            </div>
+            <!-- End modal footer-->
+          </div>
+          <!-- end modal-content-->
+        </div>
+        <!-- end modal-dialog-->
+      </div>
+      <!-- end modalConversations -->
+
+      <!-- start modalConversations -->
+      <div class="modal fade" id="modalConversations" tabindex="-1" role="dialog" aria-hidden="true">
+        <!-- start modal-dialog-->
+        <div class="modal-dialog" role="document">
+          <!-- start modal-content-->
+          <div class="modal-content">
+
+            <!-- start modal-header-->
+            <div class="modal-header">
+              <button
+                type="button"
+                class="close"
+                data-dismiss="modal"
+                v-bind:aria-label="$t('message.CLOSE')"
+                ga-on="click"
+                ga-event-category="Close button"
+                ga-event-action="Close conversation dialog window"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+
+              <h4 class="modal-title">{{ $t("message.CONVERSATIONS") }}</h4>
+            </div>
+            <!-- end modal-header-->
+
+            <!-- Start modal body-->
+            <div class="modal-body">
+
+              <!-- Begin Student Conversations -->
+              <article v-if="role=='student'">
+                <div v-for="(studentConversation, studentsIndex) in studentConversations">
+
+                  <!-- Start of conversationContainer -->
+                  <div
+                    v-for="(conversation, conversationIndex) in studentConversation.conversations"
+                    class="card card-block"
+                  >
+
+                    <!-- Start of modalImgContainer -->
+                    <section class="row modalImgContainer">
+                      <!-- Start of researcher image container -->
+                      <div class="col-lg-3 col-md-3 col-sm-3 imageContainer text-xs-center">
+                        <img
+                          class="img-rounded"
+                          v-bind:src="'https://uniweb.uottawa.ca/picture.php?action=display&amp;contentType=members&amp;id='+conversation.talkedWith.researcherid+'&amp;quality=large'"
+                          alt=""
+                        >
+                      </div>
+                      <!-- End of researcher image container -->
+
+                      <!-- Start of researcher information -->
+                      <div v-bind:id="'researcherInformation-'+conversationIndex" class="col-lg-8 col-md-8 col-sm-8">
+                        <p>
+                          {{ conversation.talkedWith.researcherName }}<br>
+                          {{ conversation.talkedWith.researcherPositionTitle }}<br>
+                          {{ conversation.talkedWith.researcherAcademicUnit }}
+                        </p>
+
+                        <!-- Start of view conversation button -->
+                        <section id="btnViewConversations">
+                          <button
+                            type="button"
+                            class="btn btn-secondary"
+                            data-toggle="collapse"
+                            v-bind:data-target="'#ConversationsContainer-'+conversationIndex"
+                            aria-expanded="false"
+                            v-bind:aria-controls="'ConversationsContainer-'+conversationIndex"
+                            ga-on="click"
+                            ga-event-category="View conversations button"
+                            ga-event-action="Student opened conversation message panel to view a conversation witha specific researcher"
+                          >
+                            {{ $t("message.VIEW-CONVERSATIONS") }}
+                            <span class="tag tag-pill">{{ conversation.talkedWith.unreadCount }} {{ $t("message.UNREAD") }}</span>
+                            <span class="fa fa-chevron-circle-down"></span>
+                          </button>
+                        </section>
+                        <!-- End of view conversation button -->
+
+                      </div>
+                      <!-- end of researcher information -->
+                    </section>
+                    <!-- end of modalImgContainer -->
+
+                    <!-- Start listing the specific researcher messages -->
+                    <section v-bind:id="'ConversationsContainer-'+conversationIndex" class="conversations-container collapse">
+
+                      <!-- Start of messages card -->
+                      <div class="card row" v-for="conversationMessage in conversation">
+
+                        <!-- Start of messages -->
+                        <section
+                          v-if="conversationMessage.is_from_student"
+                          class="col-lg-12 col-md-12 col-sm-12 col-xs-12 card card-block messageContent studentmessage arrow_left"
+                        >
+                          <p
+                            v-if="conversationMessage.read_date !== null"
+                            class="small viewed text-right"
+                          >
+                            {{ $t("message.VIEWED-ON") }}
+                            {{ formatDate(conversationMessage.read_date) }}
+                          </p>
+                          <p class="small">
+                            {{ $t("message.SENT-ON") }}
+                            {{ formatDate(conversationMessage.sent_date) }}
+                          </p>
+
+                          <p>
+                            {{ conversationMessage.body }}
+                          </p>
+                        </section>
+                        <!-- End of messages -->
+
+                        <!-- Start of messages -->
+                        <section
+                          v-if="!conversationMessage.is_from_student"
+                          class="col-lg-12 col-md-12 col-sm-12 col-xs-12 card card-block messageContent researchermessage researcher_highlight_arrow_right researcherHighlight"
+                        >
+
+                          <!-- Start of unread container -->
+                          <div class="markRead" v-if="conversationMessage.read_date === null">
+                            <p>
+                              <a
+                                v-if="conversationMessage.read_date === null"
+                                href="#"
+                                class="btn btn-secondary btn-block"
+                                @click.prevent="messageRead(conversationMessage.id)"
+                                ga-on="click"
+                                ga-event-category="Mark read link"
+                                ga-event-action="Student marked the researcher message as read"
+                              >
+                                {{ $t("message.MARK-READ") }}
+                              </a>
+                            </p>
+                          </div>
+                          <!-- end of unread container -->
+
+                          <p
+                            v-if="conversationMessage.read_date !== null"
+                            class="small viewed text-right"
+                          >
+                            {{ $t("message.VIEWED-ON") }}
+                            {{ formatDate(conversationMessage.read_date) }}
+                          </p>
+
+                          <p class="small">
+                            <span
+                              v-if="conversationMessage.read_date == null"
+                              class="unread"
+                            >
+                              <span class="fa fa-flag"></span>
+                              {{ $t("message.UNREAD") }}
+                            </span>
+                            {{ $t("message.SENT-ON") }}
+                            {{ formatDate(conversationMessage.sent_date) }}
+                          </p>
+
+                          <p>{{ conversationMessage.body }}</p>
+                        </section>
+                        <!-- End of messages -->
+                      </div>
+                      <!-- end of messages card -->
+
+                      <!-- Begin form-group sendMessage-->
+                      <div
+                        v-if="conversation.talkedWith.researcherHasReplied"
+                        class="form-group row"
+                      >
+
+                        <div
+                          v-if="messageSent"
+                          class=" alert2 alert alert-success alert-dismissible"
+                          role="alert"
+                        >
+                          <button
+                            type="button"
+                            class="close"
+                            data-dismiss="alert"
+                            aria-label="Close"
+                            ga-on="click"
+                            ga-event-category="Close button"
+                            ga-event-action="Close alert message sent"
+                          >
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                          {{ $t("message.MESSAGE-SENT") }}
+                        </div>
+
+                      <hr>
+                        <textarea class="form-control" v-bind:id="'newmessage-'+conversationIndex" rows="4"></textarea>
+                        <!--<p class="small">{{ $t("message.THIS-MESSAGE") }}</p>-->
+
+                        <button
+                          type="submit"
+                          class="btn btn-primary btn-block"
+                          @click="sendMessage(conversationIndex, conversation.talkedWith.researcherName, conversation.talkedWith.researcherid, studentConversation.username, studentConversation.name)"
+                          ga-on="click"
+                          ga-event-category="Send button"
+                          ga-event-action="Student sent message to researcher"
+                        >
+                          {{ $t("message.SEND-MESSAGE") }}
+                        </button>
+                      </div>
+                      <!-- End form-group sendMessage-->
+                    </section>
+                    <!-- End listing the specific researcher messages -->
+                  </div>
+                  <!-- end of conversationContainer -->
+                </div>
+              </article>
+              <!-- End Student Conversations -->
+
+              <!-- Begin researcher Conversations -->
+              <article v-if="role=='researcher'">
+                <div v-for="conversationResearcher in conversationResearchers">
+                  <div
+                    v-for="(conversations, index) in conversationResearcher.conversations"
+                    class="card card-block"
+                  >
+                    <!-- Start researcher information -->
+                    <section class="row">
+                      <h4 class="col-sm-12">{{ conversations.talkedWith.studentname }} </h4>
+                      <button
+                        class="btn btn-primary"
+                        @click="getStudentProfile(conversations.talkedWith.studentusername)"
+                        ga-on="click"
+                        ga-event-category="View profile button"
+                        ga-event-action="Researcher viewed the student profile"
+                      >
+                        {{ $t("message.VIEW-PROFILE") }}
+                      </button>
+
+                      <button
+                        type="button"
+                        class="btn btn-secondary"
+                        data-toggle="collapse"
+                        v-bind:data-target="'#ConversationsContainer-'+index"
+                        aria-expanded="false"
+                        v-bind:aria-controls="'#ConversationsContainer-'+index"
+                        ga-on="click"
+                        ga-event-category="View conversations button"
+                        ga-event-action="Open panel for the researcher to view the conversations with specific student"
+                      >
+                        {{ $t("message.VIEW-CONVERSATIONS") }}
+                        <span class="tag tag-pill">{{ conversations.talkedWith.unreadCount }} {{ $t("message.UNREAD") }}</span>
+                        <span class="fa fa-chevron-circle-down"></span>
+                      </button>
+                    </section>
+                    <!-- end researcher information -->
+
+                    <!-- Start listing the specific researcher conversations -->
+                    <section class="collapse" v-bind:id="'ConversationsContainer-'+index" class="container-fluid collapse">
+                      <!-- start of card-->
+                      <div class="card card-block row">
+                        <!-- start of conversation loop-->
+                        <div v-for="conversation of conversations">
+                          <!-- start From student -->
+                          <section
+                            v-if="conversation.is_from_student"
+                            class="row"
+                          >
+                            <!-- Start of messages -->
+                            <div class="col-lg-10 col-md-10 col-sm-10 card card-block messageContent student_highlight_arrow_left studentHighlight">
+                              <div
+                                v-if="conversation.is_from_student"
+                                class="markRead"
+                              >
+                                <a
+                                  v-if="conversation.read_date === null"
+                                  href="#"
+                                  class="btn btn-secondary btn-block"
+                                  @click.prevent="messageRead(conversation.id)"
+                                  ga-on="click"
+                                  ga-event-category="Mark read link"
+                                  ga-event-action="Researcher marked the student message as read"
+                                >
+                                  {{ $t("message.MARK-READ") }}
+                                </a>
+                              </div>
+
+                              <p
+                                v-if="conversation.read_date !== null"
+                                class="small viewed text-right"
+                              >
+                                <span class="fa fa-envelope-open"></span>
+                                {{ $t("message.VIEWED-ON") }}
+                                {{ formatDate(conversation.read_date) }}
+                              </p>
+                              <p class="small">
+                                <span
+                                  v-if="conversation.read_date == null"
+                                  class="unread"
+                                >
+                                  <span class="fa fa-flag"></span>
+                                  {{ $t("message.UNREAD") }}
+                                </span>
+                                {{ $t("message.SENT-ON") }}
+                                {{ formatDate(conversation.sent_date) }}
+                              </p>
+
+                              <p>{{ conversation.body }}</p>
+                            </div>
+                            <!-- end of messages -->
+                          </section>
+                          <!-- end From student -->
+
+                          <!-- start Not from student -->
+                          <section
+                            v-if="!conversation.is_from_student"
+                            class="row"
+                          >
+                            <!-- Start of messages -->
+                            <div class="card card-block messageContent arrow_right">
+                              <p
+                                v-if="conversation.read_date !== null"
+                                class="small viewed text-right"
+                              >
+                                <span class="fa fa-envelope-open"></span>
+                                {{ $t("message.VIEWED-ON") }}
+                                {{ formatDate(conversation.read_date) }}
+                              </p>
+
+                              <p class="small">
+                                {{ $t("message.SENT-ON") }}
+                                {{ formatDate(conversation.sent_date) }}
+                              </p>
+
+                              <p>{{ conversation.body }}</p>
+                            </div>
+                            <!--end of messages -->
+                          </section>
+                          <!-- end Not from student -->
+                        </div>
+                        <!-- end of conversation loop-->
+
+                        <!-- Start of add new message section -->
+                        <div class="form-group row">
+                          <div
+                            v-if="messageSent"
+                            class="alert2 alert alert-success alert-dismissible"
+                            role="alert"
+                          >
+                            <button
+                              type="button"
+                              class="close"
+                              data-dismiss="alert"
+                              aria-label="Close"
+                              ga-on="click"
+                              ga-event-category="Close button"
+                              ga-event-action="Closed alert message sent dialog window"
+                            >
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                            {{ $t("message.MESSAGE-SENT") }}
+                          </div>
+
+                          <hr>
+
+                          <textarea class="form-control" v-bind:id="'newmessage-'+index" rows="4"></textarea>
+                          <!--<p class="small">{{ $t("message.THIS-MESSAGE") }}</p>-->
+
+                          <button
+                            type="submit"
+                            @click="sendMessage(index, name, userId, conversations.talkedWith.student_username, conversations.talkedWith.studentname)"
+                            class="btn btn-primary btn-block"
+                            ga-on="click"
+                            ga-event-category="Send message button"
+                            ga-event-action="Researcher sent a reply to a student"
+                          >
+                            {{ $t("message.SEND-MESSAGE") }}
+                          </button>
+                        </div>
+                        <!-- End of add new messagesection -->
+                      </div>
+                      <!-- end of card-->
+                    </section>
+                    <!-- end listing the specific researcher conversations -->
+                  </div>
+                </div>
+              </article>
+              <!-- End researcher Conversations -->
+            </div>
+            <!-- End modal body-->
+
+            <!-- Start modal footer-->
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-ternary"
+                data-dismiss="modal"
+                ga-on="click"
+                ga-event-category="Close button"
+                ga-event-action="Close conversation dialog window"
+              >
+                {{ $t("message.CLOSE") }}
+              </button>
+            </div>
+            <!-- End modal footer-->
+
+          </div>
+          <!-- end modal-content-->
+        </div>
+        <!-- end modal-dialog-->
+      </div>
+      <!-- end modalConversations -->
+
+      <!-- End of modals, start of page body proper -->
+
+      <!-- start of headerWrapper -->
+      <div class="headerWrapper">
+
+        <!-- start of uoBrandWrapper -->
+        <div id="uoBrandWrapper" class="visible-sm-down hidden-md-up">
+          <a class="navbar-brand" href="http://www.uottawa.ca" target="_blank">
+            <img
+              src="/assets/images/UOlogoHor.svg"
+              onerror="this.onerror=null;this.src='/assets/images/UOlogoHor.png'"
+              v-bind:alt="'uOttawa ' + $t('message.FACULTY-OF-MEDICINE')"
+            >
+          </a>
+        </div>
+        <!-- End of uoBrandWrapper -->
+
+        <!-- start of topBar -->
+        <div id="topBar">
+          <button
+            id="navMenuBtn"
+            type="button"
+            class="navbar-toggler visible-sm-down hidden-md-up pull-right"
+            data-toggle="collapse"
+            data-target=".navbar-collapse"
+            ga-on="click"
+            ga-event-category="Toggle button"
+            ga-event-action="Toggled navigation on mobile device"
+          >
+            ☰
+          </button>
+        </div>
+        <!-- End of topBar -->
+
+        <header id="mainHeader" class="col-xs-12 col-md-12">
+          <!-- start of #topNav -->
+          <nav id="topNav">
+            <!-- start of #uoBrand -->
+            <div id="uoBrand" class="col-xs-12">
+              <a
+                href="http://www.uottawa.ca"
+                target="_blank"
+                class="navbar-brand hidden-sm-down visible-md-up"
+              >
+                <img
+                  src="/assets/images/UOlogoHor.svg"
+                  onerror="this.onerror=null;this.src='/assets/images/UOlogoHor.png'"
+                  alt="University of Ottawa Faculty of Medicine"
+                >
+              </a>
+
+              <!-- start of navbar-collapse -->
+              <div
+                class="navbar-collapse collapse"
+                role="navigation"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
+                <ul class="nav navbar-nav pull-right">
+                  <li
+                    v-if="loggedIn === true"
+                    class="nav-item profile"
+                  >
+                    {{ $t("message.WELCOME") }} {{ name }}
+
+                    <div v-if="role === 'student'">
+                      <a
+                        v-if="profile === true"
+                        href="#"
+                        class="btn-profile"
+                        @click.prevent="viewProfile()"
+                        ga-on="click"
+                        ga-event-category="Edit Student profile link"
+                        ga-event-action="Open student profile modal"
+                      > <span class="fa fa-edit" aria-hidden="true"></span>
+                        {{ $t("message.EDIT-PROFILE") }}
+                      </a>
+                      <a
+                        v-if="profile === false"
+                        href="#"
+                        class="btn-profile"
+                        @click.prevent="viewProfile()"
+                        ga-on="click"
+                        ga-event-category="Create Student profile link"
+                        ga-event-action="Open student profile modal"
+                      >
+                        <span class="fa fa-edit" aria-hidden="true"></span>
+                        {{ $t("message.CREATE-YOUR-PROFILE") }}
+                      </a>
+                    </div>
+
+                    <div>
+                      <a
+                        v-if="role === 'researcher'"
+                        href="#"
+                        class="btn-profile"
+                        @click.prevent="changeResearcherAvailability()"
+                        ga-on="click"
+                        ga-event-category="Edit researcher availability link"
+                        ga-event-action="Open researcher availability modal"
+                      >
+                        <span class="fa fa-edit" aria-hidden="true"></span>
+                        {{ $t("message.EDIT-AVAILABILITY") }}
+                      </a>
+                    </div>
+                  </li>
+
+                  <li
+                    v-if="loggedIn === true"
+                    class="nav-item messages"
+                  >
+                    <a
+                      v-if="hasConversations === true"
+                      id="messageLink"
+                      href="#"
+                      class="nav-link"
+                      @click.prevent="viewConversations()"
+                      ga-on="click"
+                      ga-event-category="View Student conversations link"
+                      ga-event-action="Open student conversations modal"
+                    >
+                      <span class="fa fa-envelope" aria-hidden="true"></span>
+                      <span class="label label-pill label-danger">
+                        {{ $t("message.CONVERSATIONS") }}
+                        <span class="tag tag-pill">
+                          {{ allUnreadCount }} {{ $t("message.UNREAD") }}
+                        </span>
+                      </span>
+                    </a>
+                  </li>
+
+                  <li
+                    v-if="loggedIn !== true"
+                    class="nav-item logout"
+                  >
+                    <a
+                      id="log"
+                      href="#"
+                      class="nav-link"
+                      @click.prevent="login()"
+                      ga-on="click"
+                      ga-event-category="Login link"
+                      ga-event-action="Open login modal"
+                    >
+                      {{ $t("message.LOG-IN") }}
+                      <span class="fa fa-sign-out" aria-hidden="true"></span>
+                    </a>
+                  </li>
+
+                  <li
+                    v-if="loggedIn === true"
+                    class="nav-item logout"
+                  >
+                    <a
+                      id="log"
+                      href="#"
+                      class="nav-link"
+                      @click.prevent="logout()"
+                      ga-on="click"
+                      ga-event-category="Logout link"
+                      ga-event-action="Logout of the thesis supervisor search application"
+                    >
+                      {{ $t("message.LOG-OUT") }}
+                      <span class="fa fa-sign-out" aria-hidden="true"></span>
+                    </a>
+                  </li>
+
+                  <li class="nav-item lang-switch">
+                    <a
+                      href="#"
+                      class="nav-link"
+                      @click.prevent="toggleLanguage()"
+                      ga-on="click"
+                      ga-event-category="Change language"
+                      ga-event-action="Change language of the application"
+                    >
+                      <span class="fa fa-globe" aria-hidden="true"></span>
+                      <span v-if="theSelectedLanguage === 'fr'">{{ $t("message.ENGLISH") }}</span>
+                      <span v-else>{{ $t("message.FRENCH") }}</span>
+                    </a>
+                  </li>
+                </ul>
+                <!-- End of .nav -->
+              </div>
+              <!-- End of navbar-collapse -->
+            </div>
+            <!-- End of #uoBrand -->
+          </nav>
+          <!-- End of #topNav -->
+
+          <!-- start of #siteId -->
+          <div id="siteId" class="col-xs-12 col-md-12">
+            <a href="http://www.med.uottawa.ca" target="_blank">{{ $t("message.FACULTY-OF-MEDICINE") }}</a><br>
+            <span class="siteId-text">{{ $t("message.GRAD-STUDIES") }}</span>
+          </div>
+          <!-- End of #siteId -->
+        </header>
+        <!-- End of #mainHeader -->
+      </div>
+      <!-- end of headerWrapper -->
+
+      <!-- start of wrapper -->
+      <div class="wrapper col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <!-- start of mainContainer -->
+        <main id="mainContainer">
+          <!-- start of mainContent -->
+          <div id="mainContent">
+            <!-- start of researchersListContainer -->
+            <section
+              v-if="role !== 'admin'"
+              id="researchersListContainer"
+              class="container-fluid"
+              data-spy="scroll"
+              data-target=".navbar"
+              data-offset="50"
+            >
+              <!-- start of header -->
+              <header>
+                <h1>{{ $t("message.TSS") }}</h1>
+
+                <p class="card-text" v-if="role === ''">{{ $t("message.THANK-YOU") }}</p>
+                <p class="card-text" v-if="role === ''">{{ $t("message.LIST") }}</p>
+                <p class="card-text" v-if="role === ''">{{ $t("message.SELECT-KEYWORDS") }}</p>
+                <p class="card-text disclaimer" v-if="role === '' && theSelectedLanguage === 'fr'">{{ $t("message.PLEASE-NOTE") }}</p>
+
+              </header>
+              <!-- end of header -->
+
+              <!-- start of ResearchInterests -->
+              <div id="ResearchInterests" class="row">
+                <!-- Start of interest list -->
+                <div class="col-sm-6 card card-block">
+                  <h2 class="card-title">{{ $t("message.SELECT-RESEARCH") }}</h2>
+                  <!-- Start of checkbox -->
+                  <div class="checkbox well">
+                    <button
+                      v-if ="interestsChoices.length > 0"
+                      type="button"
+                      class="btn-sm btn-delete"
+                      @click="uncheckAll()"
+                      ga-on="click"
+                      ga-event-category="button uncheck"
+                      ga-event-action="Uncheck all research interests"
+                    >
+                      {{ $t("message.UNSELECT") }}
+                    </button>
+                    <ul>
+                      <li
+                        v-for="(interest, index) in selectedInterests"
+                        class='list-group-item'
+                      >
+                        <label v-bind:for="'interests-'+index">
+                          <input
+                            v-bind:id="'interests-'+index"
+                            v-bind:name="interest"
+                            type="checkbox"
+                            v-bind:value="'interests-'+index"
+                            @click="updateChecked(interest, index, $event)"
+                            ga-on="click"
+                            ga-event-category="input check"
+                            ga-event-action="Checked a research interest"
+                          >
+                            {{ interest }}
+                            <!--<span class="counter">counter</span>-->
+                        </label>
+                      </li>
+                    </ul>
+                  </div>
+                  <!-- end of checkbox -->
+                </div>
+                <!-- end of interest list -->
+
+                <!-- Start of selected interests -->
+                <div class="col-sm-6 card card-block">
+                  <h2 class="card-title">{{ $t("message.FILTERED-INTERESTS") }} </h2>
+                  <fieldset
+                    v-for="chosenInterest of interestsChoices"
+                    class="form-group selection well"
+                  >
+                    <transition name="fade" mode="out-in" appear>
+                      <button
+                        v-bind:key="chosenInterest.theIndex"
+                        v-bind:id="'interestsItem-'+chosenInterest.theIndex"
+                        class="label label-pill label-default bg-success"
+                        @click="updateChecked(chosenInterest.theValue, chosenInterest.theIndex, $event)"
+                        aria-label="Interest chosen"
+                        v-bind:aria-labelledby="chosenInterest.theValue"
+                        ga-on="click"
+                        ga-event-category="Search term button"
+                        ga-event-action="Removed a specific term"
+                      >
+                        {{ chosenInterest.theValue }}
+                        <span class="fa fa-times" aria-hidden="true">
+                      </button>
+                      </div>
+                    </transition>
+                  </fieldset>
+                </div>
+                <!-- End of selected interests -->
+
+                <!-- Start of free text search card card-block -->
+                <div id="FreeTextSearchContainer" class="row">
+                  <h2 class="card-title">{{ $t("message.FREE-TEXT") }}</h2>
+                  <label for="freeTextSearch" class="sr-only sr-only-focusable col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    {{ $t("message.FREE-TEXT") }}
+                  </label>
+
+                  <form role="search" class="row textSearch">
+                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                      <input type="text" class="form-control" id="freeTextSearch">
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                      <input
+                        type="submit"
+                        class="btn btn-primary"
+                        v-bind:value="$t('message.GO')"
+                        @click.prevent="onFilterFreetext()"
+                        ga-on="click"
+                        ga-event-category="Input search submit button"
+                        ga-event-action="Performed a free text search"
+                      >
+                      <button
+                        type="button"
+                        class="btn btn-ternary"
+                        @click="onFilterFreetextClear()"
+                        ga-on="click"
+                        ga-event-category="Clear search button"
+                        ga-event-action="Cleared search terms"
+                      >
+                        {{ $t("message.CLEAR") }}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+                <!-- End of free text search -->
+              </div>
+              <!-- end of ResearchInterests -->
+            </section>
+            <!-- end of researchersListContainer -->
+
+            <!-- Start of filtered list of researchers section -->
+            <section
+              v-if="role != 'admin'"
+              id="filteredList"
+              class="card card-block row"
+              style="position: relative;"
+            >
+              <!-- Start of alphabetical navigation -->
+              <section id="researcherFilteredList" class="card card-block">
+                <p
+                  v-if="role === 'unknown'"
+                  class="row card-title"
+                >
+                  {{ $t("message.SELECT-FIRST-LETTER") }}
+                </p>
+                <div class="row">
+                  <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
+                    <p class="card-title">
+                      {{ $t("message.SHOWING") }}
+                      {{ researchersFiltered.length }}
+                      {{ researchersFiltered.length==1?$t("message.RESULT"):$t("message.RESULTS") }}
+                    </p>
+                  </div>
+
+                  <nav class="navbar col-lg-9 col-md-12 col-sm-12 col-xs-12 pull-right" data-spy="scroll" data-target="#navigation">
+                    <ul id="navigation" class="nav navbar-nav" data-spy="affix" data-offset-top="295">
+                      <li>
+                        <span v-for="alph of alphabuttons">
+                          <a
+                            v-if="alph.isAvailable === true"
+                            v-bind:href="'#'+alph.letter"
+                            class="btn btn-secondary btn-xs"
+                            ga-on="click"
+                            ga-event-category="Alphabet navigation"
+                            ga-event-action="Viewed resesarchers with last name starting with specific letter of the alphabet"
+                          >{{ alph.letter }}</a>
+                          <a
+                            v-else
+                            class="btn btn-disabled btn-xs disabled"
+                          >{{ alph.letter }}</a>
+                        </span>
+                      </li>
+                    </ul>
+                  </nav>
+
+                  <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <p class="card-title">{{ $t("message.IF-NECESSARY") }}</p>
+                  </div>
+                </div>
+              </section>
+              <!-- End of alphabetical navigation -->
+
+              <!-- Start of researcher list -->
+              <div class="row">
+                <div v-for="alph of alphabuttons">
+                  <p
+                    v-if="alph.isAvailable"
+                    v-bind:id="alph.letter"
+                    class="label-pill"
+                  >
+                    <strong>{{ alph.letter }}</strong>
+                  </p>
+
+                  <!-- Start of researcher card -->
+                  <article
+                    v-for="researcher in filterAlphabetical(alph.letter)"
+                    class="row"
+                  >
+                    <div class="card card-block text-center">
+                      <p class="topBorder"></p>
+                      <div class="row researcherContent">
+                        <div class="imageContainer text-xs-center col col-xl-2 col-lg-2 col-md-3 col-sm-12 col-xs-12">
+                          <div class="row">
+                            <img
+                              class="img-rounded"
+                              v-bind:src="'https://uniweb.uottawa.ca/picture.php?action=display&amp;contentType=members&amp;id='+researcher.id+'&amp;quality=large'"
+                              v-bind:alt="researcher.membership_information.first_name + ' ' + researcher.membership_information.last_name"
+                            >
+                          </div>
+
+                          <p
+                            v-if ="!researcher.available_date"
+                            v-bind:id="researcher.id"
+                            class="text-success small col col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12"
+                          >
+                            <span class="fa fa-check" aria-hidden="true"></span>
+                            {{ $t("message.CURRENTLY-AVAILABLE") }}
+                          </p>
+
+                          <p
+                            v-if ="researcher.available_date"
+                            v-bind:id="researcher.id"
+                            class="text-fail small col col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12"
+                          >
+                            <span class="fa fa-check" aria-hidden="true"></span>
+                            {{ $t("message.AVAILABLE-TO-SUPERVISE") }}
+                            {{ $t("message.STARTING-FROM") }}
+                            <span v-if="role === 'researcher'">
+                              <span
+                                v-if="availabledate"
+                                v-model="availabledate"
+                              >{{ availabledate }}</span>
+                              <span v-else>{{ researcher.available_date }}</span>
+                            </span>
+                            <span v-else>
+                              {{ researcher.available_date }}
+                            </span>
+                          </p>
+
+                          <div class="row">
+                            <button
+                              class="btn btn-primary btn-view-profile"
+                              @click="viewResearcherProfile(researcher.id)"
+                              aria-label="View profile button"
+                              v-bind:aria-labelledby="'Will display the profile of researcher ' + researcher.membership_information.first_name + ' ' + researcher.membership_information.last_name"
+                              ga-on="click"
+                              ga-event-category="View profile button"
+                              v-bind:ga-event-action="'Viewed a specific researcher profile: '+ researcher.membership_information.first_name + ' ' + researcher.membership_information.last_name"
+                            >
+                              <span class="fa fa-user fa-1x fa-fw" aria-hidden="true"></span>
+                              {{ $t("message.VIEW-PROFILE") }}
+                            </button>
+                          </div>
+                        </div>
+
+                        <div class="researcherInfo col col-lg-10 col col-md-9 col-sm-12 col-xs-12">
+                          <span
+                            v-if="researcher.lastUpdateDate"
+                            class="badge badge-default"
+                          >
+                            {{ $t("message.LAST-UPDATED") }}
+                            {{ formatDate(researcher.lastUpdateDate) }}
+                          </span>
+
+                          <h3>
+                            {{ researcher.membership_information.first_name }}
+                            {{ researcher.membership_information.last_name }}
+                            -
+                            {{ researcher.membership_information.position_title[1] }}
+                          </h3>
+
+                          <p>
+                            {{ researcher.membership_information.academic_unit[1] }}
+                          </p>
+
+                          <h4 v-if="researcher.research_interests">
+                            {{ $t("message.RESEARCH-INTERESTS") }}
+                          </h4>
+
+                          <ul class="researcherResearchInterests">
+                            <li v-for="anInterest of researcher.research_interests">
+                              <span class="label label-pill label-default">{{ anInterest.interest[1] }}
+                            </li>
+                          </ul>
+
+                          <div v-if="researcher.research_description && researcher.research_description.research_description">
+                            <h4>{{ $t("message.RESEARCH-DESCRIPTION") }}</h4>
+                            <short-description v-bind="{desc: researcher.research_description.research_description, lang: theSelectedLanguage}"></short-description>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="row btn btn-top">
+                      <a href="#ResearchInterests">
+                        <span class="fa fa-arrow-up" aria-hidden="true"></span>
+                        {{ $t("message.TOP") }}
+                      </a>
+                    </div>
+                  </article>
+                  <!-- End of researcher card -->
+                </div>
+              </div>
+              <!-- End of researcher list -->
+            </section>
+            <!-- end of filtered list of researchers section -->
+
+            <!-- Start of administration screen -->
+            <section
+              v-if="role === 'admin'"
+              id="AdminContainer"
+              class='container-fluid'
+            >
+              <header class="container">
+                <h2 role="heading" aria-level="2">{{ $t("message.TSS") }}</h2>
+                <h1 role="heading" aria-level="1">{{ $t("message.REPORTS") }}</h1>
+              </header>
+
+              <!-- Start of profiles by month report -->
+              <div class="isprofiles container card card-block table-responsive">
+                <form v-bind:action="be_url + '/reports/profiles-by-month/start/'+startDate+'/end/'+endDate+'/profiles-by-month.xlsx'" target="_blank">
+                  <input type="submit" class="btn btn-primary" v-bind:value="$t('message.EXPORT-EXCEL')">
+                </form>
+
+                <table class="table table-striped table-bordered" id="profilesTable" v-bind:summary='$t("message.PROFILE-CREATED")'>
+                  <caption>{{ $t("message.PROFILE-CREATED") }}</caption>
+                  <thead v-if="theSelectedLanguage === 'en'">
+                    <th v-for="profiles in studentProfilesByMonth">{{ profiles.month }}</th>
+                  </thead>
+                  <thead v-if="theSelectedLanguage === 'fr'">
+                    <th v-for="profiles in studentProfilesByMonth">{{ translateMonths(profiles.month) }}</th>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td v-for="profiles in studentProfilesByMonth">{{ profiles.profile_count }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <!-- End of profiles by month report -->
+
+              <!-- Start of students report -->
+              <div class="isstudents card card-block table-responsive">
+                <form v-bind:action="be_url + '/reports/students/students.xlsx'" target="_blank">
+                  <input type="submit" class="btn btn-primary" v-bind:value="$t('message.EXPORT-EXCEL')">
+                </form>
+
+                <table
+                  v-if="studentInSystem != null"
+                  id="studentsTable"
+                  class="table table-striped table-bordered"
+                  v-bind:summary='$t("message.STUDENT-IN-SYSTEM")'
+                >
+                  <caption>{{ $t("message.STUDENT-IN-SYSTEM") }}</caption>
+                  <thead>
+                    <tr>
+                      <th>{{ $t("message.PROFILE-CREATION") }}</th>
+                      <th>{{ $t("message.NAME") }}</th>
+                      <th>{{ $t("message.EMAIL") }}</th>
+                      <th>{{ $t("message.MSC") }} / {{ $t("message.PHD") }}</th>
+                      <th>{{ $t("message.TALKED-WITH") }}</th>
+                      <th>{{ $t("message.MESSAGES-SENT") }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="student in studentInSystem.student">
+                      <td>{{ formatDate(student.profile_creation) }}</td>
+                      <td>{{ student.name }}</td>
+                      <td>{{ student.email }}</td>
+                      <td>{{ translateLevelOfInstruction(student.level_of_instruction) }}</td>
+                      <td>
+                        <ul v-if="student.researcher_names != null">
+                          <li v-for="researchername in student.researcher_names">{{ researchername }}</li>
+                        </ul>
+                      </td>
+                      <td>{{ student.messages_sent }}</td>
+                    </tr>
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <td colspan="2">{{ $t("message.TOTALS-AVERAGES") }}</td>
+                      <td>
+                        {{ studentInSystem.internal_students_count }}&nbsp;{{ $t("message.INTERNAL") }},
+                        {{ studentInSystem.external_students_count }}&nbsp;{{ $t("message.EXTERNAL") }}
+                      </td>
+                      <td>
+                        <span v-for="level in studentInSystem.levelOfInstruction">
+                          {{ level.count }} {{ translateLevelOfInstruction(level.level_of_instruction) }}<br>
+                        </span>
+                      </td>
+                      <td>
+                        {{ $t("message.MEAN") }}{{ $t("message.COLON") }} {{ studentInSystem.mean_researchers_contacted }}<br>
+                        {{ $t("message.MEDIAN") }}{{ $t("message.COLON") }} {{ studentInSystem.median_researchers_contacted }}
+                      </td>
+                      <td>
+                        {{ $t("message.MEAN") }}{{ $t("message.COLON") }} {{ studentInSystem.mean_messages_sent }}<br>
+                        {{ $t("message.MEDIAN") }}{{ $t("message.COLON") }} {{ studentInSystem.median_messages_sent }}
+                      </td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+              <!-- End of students report -->
+
+              <!-- Start of supervisors report -->
+              <div class="issupervisors card card-block table-responsive">
+                <form v-bind:action="be_url + '/reports/supervisors/supervisors.xlsx'" target="_blank">
+                  <input type="submit" class="btn btn-primary" v-bind:value="$t('message.EXPORT-EXCEL')">
+                </form>
+
+                <table id="researchersTable" class="table table-striped table-bordered" v-bind:summary='$t("message.SUPERVISOR-RESPONSE")'>
+                  <caption>{{ $t("message.SUPERVISOR-RESPONSE") }}</caption>
+                  <thead>
+                    <th>{{ $t("message.NAME") }}</th>
+                    <th>{{ $t("message.MEAN-RESPONSE-TIME-DAYS") }}</th>
+                    <th>{{ $t("message.MEDIAN-RESPONSE-TIME-DAYS") }}</th>
+                    <th>{{ $t("message.UNRETURNED-CONTACTS") }}</th>
+                  </thead>
+                  <tbody>
+                    <tr v-for="supervisor in supervisorsInSystem">
+                      <td>{{ supervisor.last_name }}, {{ supervisor.first_name }}</td>
+                      <td>{{ supervisor.mean_response_time }}</td>
+                      <td>{{ supervisor.median_response_time }}</td>
+                      <td>{{ supervisor.unreturned_initial_contacts }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <!-- Start of supervisors report -->
+            </section> <!-- end of AdminContainer -->
+            <!-- End of administration screen -->
+          </div>
+          <!-- end of mainContent -->
+        </main>
+        <!-- end of mainContainer -->
+
+        <!--start of footerContainer -->
+        <div class="footerContainer">
+          <footer id="footer" class="footer col-xs-12 col-md-12">
+            <div class="container-fluid">
+              <!--start of .row-->
+              <div class="row">
+                <div class="column col-xs-12 col-sm-4 col-md-4 col-lg-3 col-xl-2">
+                  <img
+                    src="/assets/images/facMed-hor-white.svg"
+                    onerror="this.onerror=null;this.src='/assets/images/facMed-hor-white.png'"
+                    v-bind:alt="'uOttawa ' + $t('message.FACULTY-OF-MEDICINE')"
+                  >
+                </div>
+                <!--start of mainColumn-->
+                <div class="mainColumn col col-xs-12 col-sm-12 col-md-8 col-lg-9 col-xl-10">
+                  <!--start of footerInfo-->
+                  <div class="row footerInfo">
+                    <h5> {{ $t("message.GRAD-STUDIES-OFFICE") }} </h5>
+
+                    <!--start of first .column-->
+                    <div class="column col col-xl-3 col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                      <address>
+                        <p v-html='$t("message.FACULTY-ADDRESS")'> </p>
+                      </address>
+                    </div>
+                    <!--end of first .column-->
+
+                    <!--start of second .column-->
+                    <div class="column col col-xl-3 col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                      <address>
+                        <p>
+                          <span class="fa fa-envelope" aria-hidden="true"></span>
+                          <a href="mailto:grad.med@uottawa.ca">grad.med@uottawa.ca</a><br>
+                          <span class="fa fa-phone" aria-hidden="true"></span> 613-562-5215<br>
+                            <span class="fa fa-fax" aria-hidden="true"></span> 613-562-5365
+                        </p>
+                      </address>
+                    </div>
+                    <!--end of second .column-->
+
+                    <!--start of third .column-->
+                    <div class="column col col-xl-6 col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                      <p><strong>{{ $t("message.HOURS") }}</strong></p>
+                      <address class="column col col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                        <p v-html='$t("message.HOURS-DATE")'></p>
+                      </address>
+
+                      <address class="column col col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                        <p v-html='$t("message.HOURS-DATE-SUMMER")'></p>
+                      </address>
+                    </div>
+                    <!--end of third .column-->
+                  </div>
+                  <!--end of .footerInfo-->
+                </div>
+                <!--end of .mainColumn-->
+
+                <!--start of help-->
+                <div id="help" class="col col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
+                  <hr>
+                  <p>
+                    {{ $t("message.GRAD-STUDIES-OFFICE") }}
+                    {{ $t("message.DEVELOPED-BY") }}
+                    &nbsp; &nbsp; | &nbsp;&nbsp;
+                    {{ $t("message.FOR-ASSISTANCE") }}
+                    <a href="http://www.med.uottawa.ca/medtech/help/" target="_blank">
+                      {{ $t("message.HELP-DESK") }}
+                    </a>.
+                  </p>
+                </div>
+                <!--end of help-->
+              </div>
+              <!--end of .row-->
+            </div>
+            <!--end of .container-fluid -->
+          </footer>
+          <!--end of #footer-->
+
+          <!--Start of University global footer-->
+          <div id="uottawa-global-footer-swoosh">
+            <div id="uottawa-global-footer-swoosh-left-bg"></div>
+            <div class="uol--page-container">
+              <div id="uottawa-global-footer-swoosh-left"></div>
+              <div id="uottawa-global-footer-swoosh-right"></div>
+            </div>
+            <div id="uottawa-global-footer-swoosh-right-bg"></div>
+          </div>
+          <!--end of University global footer -->
+        </div>
+        <!--end of .footercontainer -->
+      </div>
+      <!-- end of wrapper -->
+    </div>
+    <!-- end #app -->
+
+    <script src="https://code.jquery.com/jquery-3.1.1.js" integrity="sha256-16cdPddA6VdVInumRGo6IbivbERE8p7CQR3HzTBuELA=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/js/bootstrap.min.js" integrity="sha384-BLiI7JTZm+JWlgKa0M0kGRpJbF2J8q+qreVrKBC47e3K6BW78kGLrCkeRX6I9RoK" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.0.1/vue.js"></script>
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.0.1/vue.min.js"></script>-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue-resource/0.7.0/vue-resource.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.16.6/lodash.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/vue.i18n/4.7.3/vue-i18n.min.js"></script>
+    <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=es5,getComputedStyle"></script>
+    <script src='assets/js/intersection-observer.js' type="text/javascript"></script>
+    <script src='assets/js/mainEs2015.js' type="text/javascript"></script>
+
+    <script>
+      IntersectionObserver.prototype.POLL_INTERVAL = 100;
+      // (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      // (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      // m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      // })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      // ga('create', 'UA-98368495-1', 'auto');
+      // ga('send', 'pageview');
+
+      window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+      ga('create', 'UA-13245411-17', 'auto');
+      // ga('send', 'pageview');
+
+      ga('require', 'eventTracker', {
+        events: ['click', 'auxclick', 'contextmenu'],
+        hitFilter: function(model, element, event) {
+          model.set('eventAction', event.type, true);
+        }
+      });
+
+      ga('require', 'pageVisibilityTracker', {
+        sendInitialPageview: true,
+        sessionTimeout: 4 * 60,
+        pageLoadsMetricIndex: 1,
+        visibleMetricIndex: 2
+      });
+
+      var dimensionValue = 'Level 1';
+      ga('set', 'dimension1', dimensionValue);
+      var metricValue = '10';
+      ga('set', 'metric1', metricValue);
+
+      ga('require', 'outboundLinkTracker', {
+        shouldTrackOutboundLink: function(link, parseUrl) {
+          var href = link.getAttribute('href') || link.getAttribute('xlink:href');
+          var url = parseUrl(href);
+          return /(^((?!tss).)*.)\.(ca|com)$/.test(url.hostname);
+        }
+      });
+
+      ga('require', 'urlChangeTracker', {
+        shouldTrackUrlChange: function(newPath, oldPath) {
+          // Strips the query string from the path values.
+          newPath = newPath.split('?')[0];
+          oldPath = oldPath.split('?')[0];
+
+          return newPath != oldPath;
+        },
+        fieldsObj: {
+          dimension1: 'virtual'
+        }
+      });
+    </script>
+
+    <script async src="https://www.google-analytics.com/analytics.js"></script>
+    <script async src='assets/js/autotrack.js'></script>
+  </body>
+</html>

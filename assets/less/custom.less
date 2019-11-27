@@ -1,0 +1,1467 @@
+@import 'base.less';
+
+// .modal-header {
+//    position: absolute;
+//    right: -300px;
+// }
+
+//Styling for alert messages: information (yellow/lightyellow), notification no error (green/light green), notification error (red/pink)
+div.browserHappy {
+    margin-bottom: 0!important;
+    text-align: center!important;;
+}
+.alertInformation {
+  .roundedCorners;
+  .boxShadowSmall;
+  background-color: @faculty-note;
+  border: 0.1rem solid @faculty-note;
+  margin: 1rem 0 1rem 0!important;
+  padding: 1rem;
+}
+
+.alertNotificationInstruction {
+  .roundedCorners;
+  .boxShadowSmall;
+  background-color: @faculty-green-extra-light;
+  border: 0.1rem solid @faculty-green;
+  margin-bottom: 1rem!important;
+  padding: 1rem;
+}
+
+.alertNotificationError {
+  .roundedCorners;
+  .boxShadowSmall;
+  background-color: @faculty-primary-extra-light;
+  border: 0.1rem solid @faculty-primary;
+  margin-bottom: 1rem!important;
+  padding: 1rem;
+}
+
+
+.card { .roundedCorners; }
+.fade-enter-active { transition: opacity 1.5s }
+.fade-enter { opacity: 0 }
+
+.glow {
+    border-width:thin;
+    border-color:#8f001A;
+}
+
+.badge-default {
+  background-color: @faculty-ternary-extra-lighter;
+  .roundedCorners;
+  padding: 0.5rem;
+  border: 0.1rem solid @faculty-ternary-extra-light;
+  margin-left: -0.5rem;
+}
+
+.disclaimer {
+    font-style: italic;
+    font-weight: bold;
+    color: @faculty-ternary;
+    margin-bottom: 0.5rem;
+    margin-left: -0.3rem;
+    background-color: @faculty-note;
+    padding: 0.3rem 0.3rem 0.3rem 0.3rem;
+    .roundedCorners;
+}
+
+.modal { overflow-y: auto!important; }
+.modal-title { margin: 0 0 0 1.3rem; }
+.text-success { color: @faculty-green!important; }
+
+.interestsItem {
+  font-size: 1.1rem;
+  font-weight: bold;
+  padding: 0 1rem 0 0;
+  color: @faculty-primary-darker;
+}
+
+.btn-primary {
+  background: @faculty-primary;
+  .roundedCorners;
+  border:0.1rem solid @faculty-primary-light;
+  transition: all 0.3s ease 0s!important;
+  text-align: center;
+  .roundedCorners;
+
+  a { color: @faculty-white!important; }
+
+  &:active { background: lighten(@faculty-primary-darker, 10%)!important; }
+  &:visited { background: lighten(@faculty-primary-darker, 10%)!important; }
+  &:hover {
+    background: lighten(@faculty-primary-darker, 20%)!important;
+    border: 0.1rem solid @faculty-primary;
+  }
+  &:focus { background: lighten(@faculty-primary-darker, 20%)!important; }
+}
+
+.btn-secondary {
+  background: @faculty-secondary;
+  .roundedCorners;
+  border:0.1rem solid @faculty-secondary-light;
+  transition: all 0.3s ease 0s!important;
+  text-align: center;
+  .roundedCorners;
+  color: @faculty-white!important;
+
+  a { color: @faculty-white!important; }
+
+  &:active { background: lighten(@faculty-secondary-darker, 10%)!important; color: @faculty-white!important; }
+  &:visited { background: lighten(@faculty-secondary-darker, 10%)!important; color: @faculty-white!important; }
+  &:hover {
+    background: lighten(@faculty-secondary-darker, 20%)!important;
+    border: 0.1rem solid @faculty-secondary;
+    color: @faculty-white!important;
+  }
+  &:focus { background: lighten(@faculty-secondary-darker, 20%)!important; color: @faculty-white!important;}
+}
+
+.btn-ternary {
+  background: @transparent;
+  .roundedCorners;
+  border:0.1rem solid @faculty-ternary-light;
+  transition: all 0.3s ease 0s!important;
+  text-align: center;
+  background: @faculty-ternary-extra-light;
+
+  a { color: @faculty-black!important; }
+
+  &:active { background: lighten(@faculty-ternary-light, 20%)!important; }
+  &:visited { background: lighten(@faculty-ternary-light, 50%)!important; }
+  &:hover {
+    background: @faculty-ternary-light;
+    border: 0.1rem solid @faculty-ternary;
+    color: @faculty-white!important;
+  }
+  &:focus { background: lighten(@faculty-ternary-light, 80%)!important; }
+}
+
+.btn-delete {
+  background: @transparent;
+  .roundedCorners;
+  border:0.1rem solid @faculty-ternary-light;
+  transition: all 0.3s ease 0s!important;
+  text-align: center;
+  background: @faculty-ternary-extra-light;
+  margin: 0 0.4rem 0 0.4rem;
+  color: @faculty-black;
+
+  a { color: @faculty-black; }
+
+  &:active { background: @faculty-ternary-extra-light; color: @faculty-black; }
+  &:visited { background: @faculty-ternary-extra-light; color: @faculty-black; }
+  &:hover {
+    background: @faculty-ternary-light;
+    border: 0.1rem solid @faculty-ternary;
+    color: @faculty-white;
+  }
+  &:focus { background: @faculty-ternary-extra-light; color: @faculty-black; }
+}
+
+.btn-disabled {
+  background: @transparent;
+  .roundedCorners;
+  border:0.1rem solid @faculty-ternary-light;
+  transition: all 0.3s ease 0s!important;
+  text-align: center;
+  background: @faculty-ternary-extra-lighter;
+  margin: .6rem 0;
+
+  a { color: @faculty-black!important; }
+}
+
+.treeview-custom { height: 200px; }
+
+.unread {
+  span{margin: 0 0.5rem 0 0;}
+  color: red;
+  -webkit-border-radius: .5rem;
+  background: #ffffff;
+  padding: 0.2rem;
+  margin-right: 1rem;
+}
+
+.list-group-item.active {
+  background-color: green!important;
+  display: block!important;
+}
+
+#modalResearcherProfile, #modalResearcherAvailability {
+    .roundedCorners;
+    .sourceSansPro;
+    padding:1rem;
+
+    modal-dialog{
+      .roundedCorners;
+    }
+
+    ul {
+      margin-top: 0.6rem;
+      margin-bottom: 0;
+      li {
+        display: inline;
+        margin: 0.2rem 0 0.2rem 0;
+
+        .label-pill {
+          background: @faculty-ternary-extra-light;
+          padding: 0.5rem;
+          margin: 0.2rem 0.5rem 0.2rem 0;
+          display: inline-block;
+          width: auto;
+          .roundedCorners;
+        }
+      }
+    }
+
+    p { color:@faculty-black; }
+
+    #basicResearcherInfo {
+      background:@faculty-white;
+      padding:1rem;
+      .boxShadowSmall;
+      margin-bottom:1rem;
+      .roundedCorners;
+      .img-rounded{
+        width:6rem;
+        .boxShadowSmall;
+        .roundedCorners;
+      }
+
+      .text-fail{ color:@faculty-primary-light; }
+
+        .modalImgContainer {
+          margin-bottom: 1rem;
+          .btn-primary {
+            margin: 0.6rem 0 0.6rem 0;
+            padding-left: 1.3rem;
+            padding-right: 1.3rem;
+          }
+        }
+    }
+
+    #researchInterests{
+      background:@faculty-white;
+      padding:1rem;
+      .boxShadowSmall;
+      .roundedCorners;
+    }
+
+    #studentInitialMessage {
+      background-color: @faculty-ternary-extra-light;
+      .roundedCorners;
+      padding: 1rem;
+      margin-top: 0.5rem;
+      margin-bottom: 0.5rem;
+
+      ul {
+        li {
+            display: block;
+            list-style-type: disc;
+        }
+      }
+
+      .btn-primary, .btn-secondary {
+        margin-top: 1rem;
+      }
+    }
+
+    .modal-content{
+      background-color: @faculty-UO-grey-light;
+      .roundedCorners;
+      .modal-header{
+        border:none;
+    }
+    .modal-footer{
+      border:none;
+    }
+    h4, h5{
+      color:@faculty-black;
+    }
+
+    h5 {
+      line-height: 3.5rem;
+      font-size: 1.55rem;
+    }
+
+    .modal-body{
+      background-color: @faculty-UO-grey-light;
+    }
+
+  }
+
+  .card{
+    background:@faculty-white;
+    color:@faculty-black;
+    .roundedCorners;
+    .boxShadowSmall;
+
+    .card-header{
+      background:@faculty-white;
+      border:none;
+      .roundedCorners;
+      a{
+        color:@faculty-black;
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .label-default{
+    color:@faculty-black;
+  }
+
+  .text-success, .text-fail {
+   .extraBolded;
+   margin-top: 0.7rem;
+   margin-bottom: 0;
+   text-align: center;
+  }
+
+
+
+  #profileGrants {
+    .card {
+      background:@faculty-ternary-extra-light;
+      margin-left: 1rem;
+      margin-right: 1rem;
+    }
+  }
+
+  #studentMessage{
+    background:@faculty-ternary-light;
+    color:@faculty-white;
+    a{
+      color:@faculty-white;
+    }
+    .card{
+      padding:1rem;
+      color:@faculty-black;
+    }
+  }
+
+  ul {
+    margin-top: 0.6rem;
+    margin-bottom: 0;
+  }
+
+  .btn-contact {
+    width: @main-width;
+    margin-top: 0.5rem;
+  }
+}
+
+
+
+
+
+
+
+/* Sortable tables  for admin view */
+  table.sortable thead {
+  background-color:#eee;
+  color:#666666;
+  font-weight: bold;
+  cursor: default;
+}
+
+
+
+#researchInterests {
+  margin: 1rem 0 1rem 0;
+}
+@media(max-width:599px){
+  .modalImgContainer {
+    display: block;
+    padding-left:0;
+    margin:auto;
+    margin-bottom:1rem;
+  }
+  .info{
+    text-align:center;
+  }
+}
+@media(min-width:600px){
+  .modalImgContainer {
+    display: block;
+    width: auto;
+    padding-left:0;
+  }
+}
+#modalConversations, #modalConversationsNotSigned {
+  .roundedCorners;
+  .modal-dialog {
+    .roundedCorners;
+  }
+
+  #btnViewConversations {
+    margin-bottom: 1rem;
+  }
+
+  article {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .messageOwner{
+    overflow:hidden;
+    text-overflow:ellipsis;}
+
+  .arrow_box {
+    background: #d4d4d4;
+  }
+
+  .arrow_box:after{
+    border-color: rgba(127,127,127,0);
+    border-left-color: #d4d4d4;
+  }
+
+
+  .modal-content{
+    background-color:@faculty-UO-grey-light;
+    .roundedCorners;
+
+    .modal-header{
+      border:none;
+    }
+
+    .modal-footer{
+      border:none;
+    }
+    .modal-body {
+      padding-top: 0;
+      padding-bottom: 0;
+      article {
+        margin-top: 0;
+        margin-bottom:0;
+
+       .modalImgContainer {
+          div:last-child {
+            margin-left: 1rem;
+          }
+
+          .imageContainer {
+            padding: 0;
+            width: 155px;
+            img {
+              border: none;
+              .boxShadowSmall;
+              .roundedCorners;
+            }
+          }
+        }
+
+      }
+
+
+
+
+
+      section:last-child {
+        margin-top: 1rem;
+        .card {
+          border: none;
+          margin-bottom:0;
+          .markRead {
+            margin-bottom: 1rem;
+
+            .btn-secondary {
+              border: 0.1rem solid @faculty-blue-light;
+            }
+          }
+          section {
+            margin-top:0;
+            margin-bottom: 1rem;
+          }
+        }
+      }
+      h4 {
+        padding: 0;
+        margin-bottom: 1rem;
+      }
+
+      .form-group {
+        margin-bottom: 0;
+        textarea, button {
+          margin-top: 1rem;
+        }
+      }
+    }
+  }
+
+  h4, h5{
+    color:@faculty-black;
+  }
+
+  h4 {
+    display: inline;
+  }
+
+  .studentmessage {
+     background: @faculty-ternary-extra-light;
+  }
+
+  .researchermessage {
+    background: @faculty-UO-grey-light;
+  }
+
+ .studentHighlight {
+   background: @faculty-blue;
+   p {
+     color: @faculty-white;
+   }
+ }
+
+ .researcherHighlight {
+   background: @faculty-blue;
+   p {
+     color: @faculty-white;
+   }
+ }
+
+  .btn-markread {
+    background: @faculty-primary;
+    color: @faculty-white;
+  }
+  .unreadContainer {
+    padding: 0.3rem;
+    display: block;
+    margin-bottom: 3rem;
+  }
+
+
+}
+
+
+#modalLogin {
+
+  background:  linear-gradient(
+      rgba(255, 255, 255, 0.65),
+      rgba(128, 128, 128, 0.65)
+    ),
+    url("../images/gradStudents-01.jpg");
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-color: #8f001A;
+
+  h2{
+    text-align: center;
+    color:@faculty-white;
+  }
+
+  h4 {
+    color:@faculty-white;
+  }
+
+  .btn-forgotPassword {
+    color:@faculty-black;
+    text-decoration: underline;
+    text-align: center!important;
+    .bolded;
+    font-size: 0.8rem;
+    margin: 1rem 0 1rem 0;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .viewPassWordContainer {
+    padding: 0 1rem 0 1rem;
+    .btn-viewPassword {
+      color:@faculty-black;
+      text-decoration: underline;
+      .bolded;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .modal-background {
+    width:100%;
+    height:100%;
+    z-index:100;
+    position:absolute;
+  }
+
+
+  .modal-dialog {
+    z-index:1000;
+    position:absolute;
+    right:0;
+    left:0;
+    max-width:500px!important;
+
+    img {
+        // width:15rem;
+        width:60%;
+        display:block;
+        margin:auto;
+    }
+  }
+
+  .modal-content{
+    .roundedCorners;
+    background-color: @faculty-ternary-extra-light;
+    .boxShadowSmall;
+    label, p, h2 {
+      color:@faculty-black;
+    }
+    h2, p {
+      text-align: center;
+    }
+
+
+
+    h2 {
+      margin-top: 0.8rem;
+      font-size: 1.8rem;
+    }
+
+    .modal-header{
+      border-bottom:0!important;
+      button.close {
+        color:@faculty-black;
+        opacity:.9;
+      }
+
+      .modal-title {
+         margin: 0 0 0 0;
+      }
+    }
+
+    .modal-body{
+      // background-color: @faculty-ternary-extra-light;
+      padding: 0 1rem 0 1rem;
+
+      h4, p, a, label {
+        color:@faculty-black;
+      }
+
+      .btn-secondary {
+        margin-top: 0.8rem;
+      }
+
+
+      #externalLoginFailedAlert, #externalcreateAccountFailedAlert, #internalLoginFailedAlert {
+        .roundedCorners;
+        .boxShadowSmall;
+        background-color: @faculty-primary-extra-light;
+        border: 0.1rem solid @faculty-primary;
+        margin-bottom: 1rem!important;
+
+
+        p {
+          margin-bottom: 0!important;
+          color: @faculty-primary;
+          text-align: center;
+        }
+      }
+
+
+      #loginContainer{
+        .card{
+          border: none;
+          padding: none;
+          // background:@faculty-UO-grey-lighter;
+        }
+        .card-text{
+              color:@faculty-white;
+        }
+
+        #createAccountContainer {
+            background: transparent;
+            padding: none;
+
+            p {
+              text-align: left;
+            }
+            .text-left{
+              display:inline;
+            }
+        }
+
+      }
+
+      #accordion {
+        .panel {
+            padding: 0 0 1rem 0;
+        }
+        input:-webkit-autofill, input:focus:-webkit-autofill {
+          -webkit-box-shadow: 0 0 0px 1000px #FFF inset;
+          box-shadow: 0 0 0px 1000px #FFF inset;
+        }
+
+        .panel a.title {
+          text-align: center;
+          padding: 1rem;
+          background-color: @faculty-ternary-extra-lighter;
+          .boxShadowSmall;
+          //border: 0.1rem solid @faculty-secondary;
+          //border: 0.1rem solid #e5e5e5;
+          display: block;
+          width: @main-width;
+          .roundedCorners;
+
+          h4 {
+            color: @faculty-secondary;
+
+          }
+        }
+        .mb-0 {
+          color: @faculty-secondary;
+          text-align: center;
+          font-size: 1.4rem;
+        }
+
+      }
+
+      .panel-heading{
+        .roundedCorners;
+        a {
+          text-decoration: none;
+          &:hover {
+            text-decoration: none;
+          }
+        }
+
+       p {  text-align: left;}
+
+      }
+
+      .panel-collapse {
+        //background-color: @faculty-ternary-light;
+        //border: 0.1rem solid @faculty-secondary;
+        margin-top: 0.5rem;
+        .roundedCorners;
+        padding:1.3rem;
+        color:@faculty-black;
+
+        .form-group{
+          &.submitbuttons{
+            text-align:center;
+          }
+
+        }
+
+        .input-group-addon {
+          background-color: @faculty-ternary-light;
+          color: @faculty-white;
+
+        }
+
+        #email{
+          margin-bottom:1rem;
+        }
+
+      }
+
+
+    }
+
+  }
+
+}
+
+
+
+
+#modalStudentProfile, #modalViewStudentProfile  {
+  z-index: 1051;
+
+  //background:  linear-gradient(
+  //  rgba(0, 0, 0, 0.8),
+  //  rgba(0, 0, 0, 0.8)
+  //);
+
+  .modal-content{
+    text-align:left;
+    .roundedCorners;
+    background-color:@faculty-UO-grey-light;
+    h4 {
+      color:@faculty-black;
+    }
+    label.btn > input[type='radio'] {
+        display: none;
+    }
+    .modal-body{
+      background-color: @faculty-UO-grey-light;
+
+      .active {
+        background-color: @faculty-blue;
+      }
+    }
+  }
+
+  .label-secondary {
+    text-decoration: underline;
+  }
+  .card-block{
+    background-color:@faculty-white;
+    color:@faculty-black;
+    .boxShadowSmall;
+    .form-control{
+      .roundedCorners;
+    }
+  }
+  .modal-header{
+    border-bottom:0!important;
+  }
+  .modal-footer{
+
+      border-top:0px!important;
+  }
+  .form-group {
+    /*margin-bottom: 0;*/
+
+    .radio {
+      padding: 0.5rem;
+    }
+  }
+
+  .showSelectMenu {
+    margin-bottom: 1rem;
+  }
+
+  fieldset {
+    margin: 1rem 0 1rem 0;
+  }
+
+  #externalLoginFailedAlert {
+    .roundedCorners;
+    .boxShadowSmall;
+    background-color: @faculty-primary-extra-light;
+    border: 0.1rem solid @faculty-primary;
+    margin-bottom: 1rem!important;
+
+
+    p {
+      margin-bottom: 0!important;
+      color: @faculty-primary;
+      text-align: center;
+    }
+
+    .btn-danger {
+      background-color: @faculty-primary;
+      margin-top: 0.5rem;
+    }
+
+    .btn-default {
+      background-color: @faculty-ternary-extra-light;
+      border: 0.1rem solid @faculty-black;
+      margin-top: 0.5rem;
+    }
+
+  }
+
+}
+
+
+
+
+.tag {
+  border-radius: 0.5rem;
+  background: @faculty-white;
+  color: #000000;
+}
+
+
+
+
+
+
+
+/* student initial message component */
+
+#studentMessage {
+
+  padding: 1rem;
+  background: @faculty-ternary-extra-light;
+  margin:1rem 0 1rem 0;
+  display:block;
+  .boxShadowSmall;
+  .roundedCorners;
+
+
+  .card {
+    background: @faculty-ternary-extra-light;
+    padding: 0;
+    margin: 1rem 0.2rem 1rem 0.2rem;
+    border: 0.1rem solid @faculty-ternary-light;
+    .boxShadowSmall;
+    .roundedCorners;
+
+    ul {
+      margin: 0 2rem 0 2rem;
+    }
+  }
+}
+
+
+#login:before {
+  content: ' ';
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width:@main-width;
+    height: 100%;
+    z-index: 1;
+    opacity: 0.6;
+    background-color: @faculty-black;
+    background-image:url('../img/gradStudents.jpg');
+    background-repeat: no-repeat;
+    background-position: 50% 0;
+    -ms-background-size: cover;
+    -o-background-size: cover;
+    -moz-background-size: cover;
+    -webkit-background-size: cover;
+    background-size: cover;
+}
+
+
+/* modal styles */
+
+.modal-content {
+  height: auto;
+  min-height: 100%;
+  border-radius: 0;
+}
+
+
+/*Student profile styles*/
+#studentProfile {
+  background: @faculty-white;
+  padding: 1rem;
+  margin: 1rem 0 1rem 0;
+  display:block;
+  .roundedCorners;
+  .boxShadowSmall;
+
+  .help-block {
+    font-size: 0.5rem;
+  }
+
+  #cvUpload, #transcriptUpload {
+    background: @faculty-ternary-extra-light;
+    .boxShadowSmall;
+    margin: 1rem 0 1rem 0;
+    .roundedCorners;
+  }
+
+}
+
+
+
+/*Researcher list component styles*/
+#AdminContainer {
+  display:block;
+  background-color:@faculty-white;
+  padding:1rem;
+  .roundedCorners;
+
+  .card {
+    border: none;
+    background-color: @faculty-ternary-extra-light;
+    margin-bottom: 2rem;
+  }
+
+  header {
+    h1 {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 2rem;
+    }
+  }
+
+  h2 {
+    text-align: center;
+    font-size: 1.6rem;
+  }
+
+  table {
+    font-size: 1rem;
+    width: 100%;
+    background-color: @faculty-white;
+    .boxShadowSmall;
+
+    caption {
+      caption-side: top!important;
+      font-size: 1.4rem;
+      color: @faculty-black;
+    }
+    td {
+      padding: 0.5rem;
+    }
+  }
+
+  #profilesTable {
+    td, th {
+      text-align: center;
+    }
+  }
+
+  #studentsTable {
+    td, th {
+      text-align: left;
+      ul, ol {
+        margin: 1rem;
+        text-align: left;
+      }
+    }
+  }
+
+  #researchersTable {
+    td, th {
+      text-align: left;
+    }
+  }
+}
+
+
+
+#researchersListContainer {
+  display:block;
+  background-color:@faculty-white;
+  padding:1rem;
+  .roundedCorners;
+
+  .card {
+    border: none;
+    .roundedCorners;
+  }
+
+  span.counter { font-size: 12px; color: silver;}
+  .publications {padding: 20px; }
+  .publications label {font-weight: bold;}
+
+
+  header {
+    h1 {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom:1rem;
+    }
+
+    p {
+      margin-left: 1rem;
+      margin-right: 1rem;
+    }
+  }
+
+  h2 {
+    font-size: 1.6rem;
+  }
+
+  #FreeTextSearchContainer {
+    margin: 1rem 0 1rem 0;
+    padding: 1rem;
+    background: @faculty-ternary-extra-light;
+    color: @faculty-ternary;
+    .roundedCorners;
+    form {
+      div {
+        padding: 0;
+        input, button {
+          margin: 0.2rem 0 0.2rem 0;
+        }
+      }
+      div:last-child {
+        padding-left: 0.5rem;
+      }
+
+    }
+  }
+
+  #ResearchInterests {
+    margin: 1rem 0 1rem 0;
+    background: @faculty-ternary-extra-light;
+    color: @faculty-ternary;
+    .roundedCorners;
+
+    .btn-delete {
+      margin: 0.5rem 0 0 1rem;
+    }
+
+    .card {
+      background: @transparent;
+      padding:1rem!important;
+      margin-bottom:0!important;
+
+      .textSearch {
+        input{
+          .removeRoundedCorners;
+          .roundedCorners;
+        }
+
+        div {
+          margin:0;
+          padding: 0.5rem 0 0.5rem 0;
+        }
+      }
+
+      .bg-success{
+      width:auto;
+      padding:0.5rem;
+      background-color:@faculty-white!important;
+      }
+
+      fieldset{
+        float:left;
+      }
+
+      .label-pill {
+        background: @faculty-ternary-extra-light;
+        padding: 0.5rem;
+        margin: 0.2rem 0.5rem 0.2rem 0;
+        display: inline-block;
+        width: auto;
+        background: @faculty-ternary-lighter;
+        padding: 0.5rem;
+        margin-right: 0.5rem;
+        margin-top: 0.5rem;
+        display: inline-block;
+        width: auto;
+        .roundedCorners;
+      }
+    }
+
+    .card-block {
+      padding: 0.5rem;
+    }
+
+    .checkbox {
+
+      &.well{
+        background:@faculty-white;
+        .roundedCorners;
+      }
+      width: @main-width;
+      height: 9rem;
+      display: block;
+      overflow:hidden;
+      overflow-y:scroll;
+
+      ul {
+        padding: 0.5rem;
+
+        .list-group-item {
+          cursor: pointer;
+          border: none;
+          background: @faculty-white;
+          line-height: 1.4rem;
+          padding: .5rem .5rem .2rem .5rem;
+
+          &:hover {
+            background: @faculty-ternary-extra-light;
+          }
+
+          label {
+            width: 100%!important;
+            cursor: pointer;
+          }
+        }
+      }
+    }
+    .card-title {
+      margin-bottom:1rem;
+    }
+
+  }
+
+  #filter {
+    background: @faculty-ternary-extra-light;
+    padding: 1rem;
+    .roundedCorners;
+
+    .selection {
+        background: @faculty-white;
+        .roundedCorners;
+        padding: 1rem;
+    }
+  }
+
+  #filterList {
+    margin: 1rem 0 1rem 0;
+    background: @faculty-ternary-extra-light;
+    color: @faculty-ternary;
+    .roundedCorners;
+    .boxShadowSmall;
+
+    .btn {
+      display: inline-block;
+      padding: 0.375rem 1rem;
+      font-size: 1rem;
+      font-weight: 400;
+      line-height: 1.5;
+      text-align: center;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      -moz-user-select: none;
+      user-select: none;
+      border: 1px solid transparent;
+      border-radius: 0.25rem;
+    }
+
+
+    .card {
+        .boxShadowSmall;
+        padding: 1rem;
+        border: 0.1rem solid @faculty-ternary-extra-light;
+
+      #researchInterests {
+        p {
+          .bolded;
+        }
+      }
+    }
+
+  }
+
+  #search {
+    .input-group {
+      position: relative;
+      display: block;
+      border-collapse: separate;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 0.375rem 1rem;
+      font-size: 1rem;
+      font-weight: 400;
+      line-height: 1.5;
+      text-align: center;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      -moz-user-select: none;
+      user-select: none;
+      border: 1px solid transparent;
+      border-radius: 0.25rem;
+    }
+  }
+}
+
+
+#filteredList {
+  margin-top: 0.8rem;
+
+  .btn-primary {
+    margin: 0.6rem 0 0.6rem;
+  }
+
+  #researcherFilteredList {
+    .navbar {
+      padding-top: 0!important;
+    }
+  }
+
+  article {
+    .card {
+      background-color: @faculty-white!important;
+      margin-bottom: 0;
+      padding: 0!important;
+
+      .img-rounded {
+        width:6rem;
+        .boxShadowSmall;
+        .roundedCorners;
+      }
+
+      .topBorder, .bottomBorder {
+        padding: 0.5rem;
+        display: block;
+        .topSideRoundedCorners;
+        background-color: @faculty-secondary;
+      }
+
+      .topBorder {
+        .topSideRoundedCorners;
+      }
+
+      .bottomBorder {
+        .bottomSideRoundedCorners;
+      }
+
+
+      .text-success {
+        color: @faculty-green!important;
+        font-size: 1.1rem;
+        .extraBolded;
+      }
+
+      .text-fail {
+        color: @faculty-primary!important;
+        font-size: 1.1rem;
+        .extraBolded;
+      }
+
+      .text-success, .text-fail {
+        margin-top: 0.7rem;
+        margin-bottom: 0;
+
+      }
+
+      .researcherContent {
+        padding: 1.25rem;
+      }
+    }
+
+
+    .btn-top {
+      margin: 0.5rem 0 0.5rem 0;
+
+      a {
+        color: @faculty-blue;
+        text-decoration: underline;
+
+        &:hover {
+          color: @faculty-secondary;
+        }
+      }
+    }
+  }
+
+  .researcherInfo {
+    padding-top: 1rem!important;
+    img {
+      max-width: 70%!important;
+      height: auto!important;
+      width: auto!important; /* The image is made responsive further below for smaller windows (@ 800px) */
+    }
+
+    h3 {
+      line-height: 3.5rem;
+    }
+
+    ul {
+      margin-top: 0.6rem;
+      margin-bottom: 1rem;
+      li {
+        display: inline;
+        margin: 0.2rem 0 0.2rem 0;
+
+        .label-pill {
+          background: @faculty-ternary-extra-light;
+          padding: 0.5rem;
+          margin: 0.2rem 0.5rem 0.2rem 0;
+          display: inline-block;
+          width: auto;
+          .roundedCorners;
+        }
+      }
+    }
+  }
+
+   p.label-pill{
+      background: @faculty-secondary;
+      color: @faculty-white;
+      padding: .6rem 1rem .6rem 1rem;
+      margin: 1rem 0 1rem 0;
+      display: inline-block;
+      width: auto;
+      .roundedCorners;
+    }
+}
+
+
+ul.researcherResearchInterests {
+  margin-top: 0.6rem;
+  margin-bottom: 1rem;
+  list-style-type: none;
+
+  li {
+    display: inline;
+    margin: 0.2rem 0 0.2rem 0;
+
+    button {
+      &:hover{
+        background: @faculty-ternary-lighter;
+        transition: all 0.3s ease 0s!important;
+      }
+      padding: 0.2rem;
+      background: @faculty-ternary-extra-light;
+      margin: .2rem .2rem .8rem 0;
+      transition: all 0.3s ease 0s!important;
+      .roundedCorners;
+      font-size: 1.2rem;
+    }
+
+  }
+}
+
+
+#footer{
+  img{
+    width:100%;
+  }
+}
+
+@media (min-width: 768px) {
+  .mobile li{
+    display:none!important;
+  }
+
+  .navbar-collapse.collapse {
+    display: block !important;
+    height: auto !important;
+    padding-bottom: 0px;
+    overflow: visible !important;
+  }
+
+  .navbar-collapse {
+    width: auto;
+    border-top: 0px none;
+    box-shadow: none;
+  }
+  .navbar-nav > ul{
+    text-align: center!important;
+  }
+  .navbar-nav > li {
+    float: left;
+    a {
+      color:@faculty-white;
+    }
+  }
+
+  .navbar-toggle {
+    display: none;
+  }
+
+  .navbar-nav > li > a {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+}
+
+
+@media(max-width:768px){
+  .logout{
+    background:transparent!important;
+    border:none!important;
+  }
+  .logout:hover{
+    background:transparent!important;
+    border:none!important;
+  }
+  input#cv{
+    width:95%!important;
+  }
+  input#transcript{
+    width:95%!important;
+  }
+  .navbar-collapse .nav{
+    text-align: center;
+  }
+  .mobile .profile{text-align: right;}
+  .profile p{
+    display:none!important;
+  }
+  .btn-profile{
+    color:@faculty-white!important;
+  }
+}

@@ -1,0 +1,30 @@
+[
+    {
+        "mean_response_time": 1.0,
+        "median_response_time": 1,
+        "name": "Dr. Four",
+        "uniweb_number": "4",
+        "unreturned_contacts": 1
+    },
+    {
+        "mean_response_time": 4.5,
+        "median_response_time": 4.5,
+        "name": "Dr. One",
+        "uniweb_number": "1",
+        "unreturned_contacts": 0
+    },
+    {
+        "mean_response_time": 6.0,
+        "median_response_time": 6,
+        "name": "Dr. Three",
+        "uniweb_number": "3",
+        "unreturned_contacts": 1
+    },
+    {
+        "mean_response_time": 7.0,
+        "median_response_time": 7.0,
+        "name": "Dr. Two",
+        "uniweb_number": "2",
+        "unreturned_contacts": 0
+    }
+]

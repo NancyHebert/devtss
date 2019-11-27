@@ -1,0 +1,9 @@
+/node_modules
+/bower_components
+
+/report
+/typings
+/tmp
+.DS_Store
+/jscover
+jscover.sh
