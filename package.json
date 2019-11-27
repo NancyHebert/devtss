@@ -50,7 +50,7 @@
     "core-js": "^2.4.0",
     "es6-shim": "^0.35.0",
     "font-awesome": "^4.6.1",
-    "jquery": "^2.2.3",
+    "jquery": "^3.4.1",
     "localStorage": "^1.0.3",
     "lodash": "^4.11.0",
     "nativescript-ng2-translate": "^1.1.0",
